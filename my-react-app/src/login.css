@@ -1,45 +1,5 @@
 
 
-
-.contenedor{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border: 3px solid black;
-    padding: 10px;
-    background-color: #dae8b0;
-    border-radius: 5px;
-    width: 600px;
-
-}   
-
-.texto-login{
-    margin-top: 35px;
-    margin-bottom: 50px;
-    margin-left: 20px;
-    margin-right: 20px;
-    font-family: arial;
-    font-size: 24px;
-    text-align: center;
-}
-
-
-.entrada{
-    margin-bottom: 5px;
-}
-
-.creaUsuario{
-  
-    display: block;
-    line-height: 30px;
-    font-size: small;
-}
-
-
-
-
-
 .contenedor{
     position: absolute;
     top: 50%;

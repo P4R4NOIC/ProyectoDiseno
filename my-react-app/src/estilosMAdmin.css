@@ -1,0 +1,60 @@
+.columna{
+    background-color: rgb(55, 117, 108);
+    border-radius: 5px;
+    border: solid;
+  
+   
+   
+  }
+
+.scroll{
+    overflow-y: scroll;
+    height: 400px;
+    overflow-x: hidden;
+    border-top: solid;
+}
+
+.columna-izq{
+    margin-left: -250px;
+    margin-right: 45px;
+}
+
+.columna-der{
+    margin-right: -250px;
+    margin-left: 45px;
+}
+
+.botonAdm{
+    margin-top: 20px;
+}
+
+
+
+
+.titulo{
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: Arial;
+    font-size:x-large;
+    font-weight: bold;
+}
+.tituloPrincipal{
+    font-family: Arial;
+    font-weight: bold;
+    margin-left: 40px;
+}
+
+.textoCaja{
+    margin-top: 5px;
+    margin-left: 3px;
+    font-family: Arial;
+}
+
+.profes{
+    text-decoration: none;
+    color: white;
+}
+.profes:hover{
+    color:rgb(182, 144, 218);
+}
