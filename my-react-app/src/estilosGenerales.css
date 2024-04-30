@@ -15,13 +15,17 @@
 
 .contenedor{
   margin-top: 45px;
+ display: inline-block;
 }
-
 .imagen{
  width: 250px;
 
 }
-
+.contenedorLargo{
+  overflow-y: scroll;
+  height: 800px;
+  overflow-x: hidden;
+}
 .boton{
     margin-left: 25%;
     margin-top: 10px;
@@ -133,4 +137,12 @@
   justify-content: space-between;
   max-width: 300px;
   margin-left: 15%;
+}
+
+.cajaSelect {
+  width: auto;
+}
+
+.cajaSelect select{
+  width: 100%;
 }

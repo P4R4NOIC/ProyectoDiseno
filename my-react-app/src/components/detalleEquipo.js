@@ -4,6 +4,12 @@ import Table from 'react-bootstrap/Table';
 import { useNavigate } from "react-router-dom";
 
 export const DetalleEquipo = () => {
+
+  if(localStorage.getItem("conexion") == "ADMIN"){
+      var titulo = "Asistente Administrativo: "
+  }else{
+    var titulo = "Coordinador: "
+  }
   var variable= localStorage.getItem("usuario");
   const navigate = useNavigate();
   const data = [
@@ -67,7 +73,7 @@ export const DetalleEquipo = () => {
   return (
     <div>
       <div>
-        <h1 className = "tituloPrincipal">Coordinador: <label id="nombreCoordinador">{variable}</label></h1>  
+        <h1 className = "tituloPrincipal">{titulo} <label id="nombreCoordinador">{variable}</label></h1>  
       </div>
 
       <div className='cajaTabla'>

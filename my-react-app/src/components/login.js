@@ -18,7 +18,8 @@ function validaCorreo(){
 
   if (correoAdminValido.test(email) && contrasena !== "")
   {
-      localStorage.setItem("conexion", "ESTUD")
+      localStorage.setItem("conexion", "ADMIN")
+      localStorage.setItem("conexionEsp", "CADMIN")
       localStorage.setItem("usuario", email)
       navigate('/landingAdmin');
       
