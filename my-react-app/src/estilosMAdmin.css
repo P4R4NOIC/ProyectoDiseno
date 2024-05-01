@@ -6,7 +6,9 @@
    
    
   }
-
+.archivos{
+    width: 200px;
+}
 .scroll{
     overflow-y: scroll;
     height: 400px;

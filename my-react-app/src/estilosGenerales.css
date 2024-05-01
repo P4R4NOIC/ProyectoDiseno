@@ -78,6 +78,23 @@
   transition-duration: .1s;
 }
 
+.boton.disabled {
+  background-image: linear-gradient(92.88deg, #a0a0a0 9.16%, #989898 43.89%, #8f8f8f 64.72%);
+  color: #cccccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.boton.disabled:hover {
+  box-shadow: none;
+}
+
+.form-control.disabled {
+  background-image: linear-gradient(92.88deg, #a0a0a0 9.16%, #989898 43.89%, #8f8f8f 64.72%);
+  color: black;
+  box-shadow: none;
+}
+
 @media (min-width: 768px) {
   .boton {
     padding: 0 2.6rem;

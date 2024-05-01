@@ -99,11 +99,8 @@ export const InfoProfe = () => {
        
       }
 
-     
-     
-    
-    
     }, [])
+    
   return (
     <div>
        <h1 class = "tituloPrincipal">Asistente Administrativo: <label id="nombreProfesor">{variable}</label></h1>  

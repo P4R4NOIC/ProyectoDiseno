@@ -37,7 +37,11 @@ export const ListaEstudiantes = () => {
       sede: "Cartago"
     },
   ];
-
+  const usuario = 
+    { 
+      sede: "Cartago",
+      tipoUsuario: 'Guía',
+    };
     const [orden, setOrden] = useState({ criterio: null, tipo: 'ascendente' });
   
     const ordenarPor = (criterio) => {
@@ -60,6 +64,30 @@ export const ListaEstudiantes = () => {
       }
       return 0;
     });
+
+
+    const handleClick = (rowData) => {
+    
+      // Convertir rowData en un objeto
+      const objetoParaGuardar = {
+        carnet: rowData.carnet,
+        correo: rowData.correo,
+        numCelular: rowData.numCelular,
+        primerNombre: rowData.primerNombre,
+        segundoNombre: rowData.segundoNombre,
+        primerApellido: rowData.primerApellido,
+        segundoApellido: rowData.segundoApellido,
+        sede: rowData.sede,
+      };
+  
+      
+
+      // Guardar el objeto en localStorage
+      localStorage.setItem("EstudianteIndividual", JSON.stringify(objetoParaGuardar));
+      var infoEstudianteJSON = localStorage.getItem("EstudianteIndividual");
+      var infoEstudiante = JSON.parse(infoEstudianteJSON);
+      navigate('/modEstudiante');
+    };
   
   return (
     <div>
@@ -76,6 +104,7 @@ export const ListaEstudiantes = () => {
                 <th>Correo</th>
                 <th>Número Celular</th>
                 <th>Sede</th>
+                <th>Modificar</th>
             </tr>
             </thead>
             <tbody>
@@ -87,6 +116,16 @@ export const ListaEstudiantes = () => {
                           <td>{val.correo}</td>
                           <td>{val.numCelular}</td>
                           <td>{val.sede}</td>
+                          {usuario.sede === val.sede && usuario.tipoUsuario === 'Guía' && (
+                            <td>
+                              <button className="button boton btn-submit" onClick={ ()=> handleClick(val)}>Modificar estudiante</button>
+                            </td>
+                          )}
+                          {usuario.sede !== val.sede && (
+                            <td>
+                              <button className="button boton disabled btn-submit">Modificar estudiante</button>
+                            </td>
+                          )}
                       </tr>
                   )
               })}

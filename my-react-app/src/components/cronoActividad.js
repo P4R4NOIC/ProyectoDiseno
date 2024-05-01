@@ -4,7 +4,7 @@ import Table from 'react-bootstrap/Table';
 import { useNavigate } from "react-router-dom";
 
 export const CronoActividad = () => {
-  var variable= localStorage.getItem("usuario");
+  var variable = localStorage.getItem("usuario");
   const navigate = useNavigate();
 
   const data = [
@@ -34,14 +34,15 @@ export const CronoActividad = () => {
   const handleClick = (rowData) => {
     var idActual = rowData.id;
     localStorage.setItem("idActividadActual",idActual);
-    var idObservado = localStorage.getItem("idActividadActual");
-    alert(idObservado);
+    
+    navigate('/actividad');
   };
 
   return (
     <div>
       <div>
         <h1 className='tituloPrincipal'>Cronograma de actividades:</h1>  
+        <h4 className='tituloPrincipal'> De click sobre una actividad para visitarla</h4>
       </div>
 
       <div className='cajaTabla'>
@@ -68,10 +69,16 @@ export const CronoActividad = () => {
             </tbody>
         </Table>
       </div>
-
-      <div className='divVolver'>
-        <button className="button boton btn-submit" onClick={ ()=> navigate('/planActividad')}>Crear actividad</button>
+      {variable === 'Coordinador' && (
+        <div className='divVolver'>
+          <button className="button boton btn-submit" onClick={ ()=> navigate('/planActividad')}>Crear actividad</button>
+        </div>
+      )}
+      {variable !== 'Coordinador' && (
+        <div className='divVolver'>
+        <button className="button boton disabled btn-submit" onClick={ ()=> navigate('/planActividad')}>Crear actividad</button>
       </div>
+      )}
     
       <div className='divVolver'>
         <button className="button boton btn-submit" onClick={ ()=> navigate(-1)}>Volver</button>

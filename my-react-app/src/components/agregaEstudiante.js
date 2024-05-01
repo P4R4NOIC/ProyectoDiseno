@@ -19,10 +19,12 @@ export const AgregaEstudiante = () => {
           <input type="text" id="inputPassword" className="form-control entrada" placeholder="Apellido" required=""></input>
           <label class = "textoGenera">Segundo Apellido:</label>
           <input type="text" id="inputPassword" className="form-control entrada" placeholder="Segundo Apellido" required=""></input>
+          <label class = "textoGenera">Campus:</label>
+          <input type="text" id="inputPassword" className="form-control entrada" placeholder="Campus" required=""></input>
           <label class = "textoGenera">Correo:</label>
           <input type="mail" id="inputPassword" className="form-control entrada" placeholder="Correo" required=""></input>
           <label class = "textoGenera">Carnet:</label>
-          <input type="text" id="inputPassword" className="form-control entrada" placeholder="Carnet" required=""></input>
+          <input type="number" id="inputPassword" className="form-control entrada" placeholder="Carnet" required=""></input>
           <label class = "textoGenera">Numero de Telefono Celular:</label>
           <input type="number" id="inputPassword" className="form-control entrada" placeholder="Numero de Telefono Celular" required=""></input>
          

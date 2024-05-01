@@ -36,7 +36,7 @@ export const CreaProfe = () => {
               <button className="button boton btn-submit" type="button" >
                 Agregar
               </button>
-              <button className="button boton btn-submit" type="button" onClick={()=>navigate('/landingAdmin')}>
+              <button className="button boton btn-submit" type="button" onClick={()=>navigate(-1)}>
                 Volver
               </button>
 

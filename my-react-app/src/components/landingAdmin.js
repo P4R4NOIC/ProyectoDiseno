@@ -1,11 +1,26 @@
 import React from 'react'
 import "../estilosGenerales.css"
-
+import { useState } from 'react'
 import "../estilosMAdmin.css"
+
 import { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
-
+import * as XLSX from 'xlsx';
 export const LandingAdmin = () => {
+
+  var archivosLista = ["estudiantes.xlsx", "est2024.xlsx","est2025.xlsx"]
+
+  const [archivoSeleccionado, setArchivoSeleccionado] = useState("nulo");
+  const opcionesArchivos = [];
+  for (var i = 0; i < archivosLista.length; i++) {
+    opcionesArchivos.push(<option key={i} value={archivosLista[i]}>{archivosLista[i]}</option>);
+  }
+
+  const cambiarArchivo = (event) => {
+    setArchivoSeleccionado(event.target.value)
+   
+  }
+
     const navigate = useNavigate();
     localStorage.setItem("coordinador", 0);
     var variable= localStorage.getItem("usuario");
@@ -36,6 +51,29 @@ export const LandingAdmin = () => {
         
       }
     }
+    console.log(parseFloat(0.1*0.2).toPrecision(12))
+    console.log(0.1*0.2)
+ 
+    function creaEstudiantes(){
+      var datos;
+      fetch("/excels/estudiantes.xlsx")
+      .then((res) => res.arrayBuffer())
+      .then((ab) => {
+        const workbook = XLSX.read(ab, { type: "array" });
+        const sheetName = workbook.SheetNames[0]
+        const sheet = workbook.Sheets[sheetName]
+        datos = XLSX.utils.sheet_to_json(sheet);
+        for(var i = 0; i<datos.length; i++){
+          var div = document.createElement("div");
+          div.classList = "textoCaja";
+          div.textContent = datos[i]["Nombre"] + " " + datos[i]["Segundo Nombre"] + " " + datos[i]["Apellido"] + " " + datos[i]["Segundo Apellido"];
+          document.getElementById("colEst").appendChild(div);
+        }
+      });
+      
+    }
+
+
     function creaProfes(){
       for(var i = 0; i<profes.length; i++){
         if(profes[i]["equipo"] === 0){
@@ -57,9 +95,12 @@ export const LandingAdmin = () => {
       }
     }
     useEffect(()=>{
+     // var fs = require('fs');
+      //var files = fs.readdirSync('/public');
         creaProfesGuia();
         creaProfes();
-        console.log(localStorage.getItem("profe"))
+        creaEstudiantes();
+    
       }, [])
   return (
     <div>
@@ -71,11 +112,8 @@ export const LandingAdmin = () => {
             <div className="col columna-izq columna">
          
             <div className=" titulo">Lista de Estudiantes</div>
-            <div className = "scroll">
-            <div className=" textoCaja">Fernando</div>
-            <div className=" textoCaja">Roberto</div>
-            <div className="textoCaja">Gabriel</div>
-            <div className="textoCaja">Dylan</div>
+            <div className = "scroll" id = "colEst">
+
         
           
             </div>
@@ -126,6 +164,14 @@ export const LandingAdmin = () => {
 
 
 <button className="button boton btn-submit" type="button" onClick={()=>navigate('/login')}>Volver</button>
+            <div class = "archivos">
+                <select className="form-control entrada" value={archivoSeleccionado} onChange={cambiarArchivo}>
+                
+                  <option value={"nulo"}>Seleccionar Archivo</option>
+                  {opcionesArchivos}
+                </select>
+              </div>
+
 
     </div>
   )

@@ -67,13 +67,14 @@ export const DetalleEquipo = () => {
     localStorage.setItem("ProfeIndividual", JSON.stringify(objetoParaGuardar));
     var infoProfeJSON = localStorage.getItem("ProfeIndividual");
     var infoProfe = JSON.parse(infoProfeJSON);
-    alert(infoProfe.id);
+    navigate('/infoProfe');
   };
 
   return (
     <div>
       <div>
         <h1 className = "tituloPrincipal">{titulo} <label id="nombreCoordinador">{variable}</label></h1>  
+        <h4 className='tituloPrincipal'> De click sobre un profesor para ver su perfil</h4>
       </div>
 
       <div className='cajaTabla'>
