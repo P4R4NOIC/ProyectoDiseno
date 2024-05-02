@@ -4,21 +4,23 @@ import "../estilosGenerales.css"
 import "../estilosInfoProfe.css"
 import { useEffect } from 'react'
 export const InfoProfe = () => {
-  var profes = [{nombre: "Francisco", segNombre:"Jose", primerAp:"Torres", segAp:"Rojas", id:1, 
-                      correo:"torresrojas@itcr.ac.cr", telOficina: 12345678, cel: 90123456, codigo: 123, equipo:1, coordinador: 1},
+  var profes = [{nombre: "Francisco", segNombre:"Jose", primerAp:"Torres", segAp:"Rojas",sede:"SJ", id:1, 
+                      correo:"torresrojas@itcr.ac.cr", telOficina: 12345678, cel: 90123456, codigo: 1, equipo:1, coordinador: 1},
 
-                      {nombre: "Adriana", segNombre:"", primerAp:"Alvarez", segAp:"Figueroa", id:2, 
-                      correo:"aalvarez@itcr.ac.cr", telOficina: 21212121, cel: 90909090, codigo: 456, equipo:0, coordinador: 0}]
+                      {nombre: "Adriana", segNombre:"", primerAp:"Alvarez", segAp:"Figueroa",sede:"SJ", id:2, 
+                      correo:"aalvarez@itcr.ac.cr", telOficina: 21212121, cel: 90909090, codigo: 2, equipo:0, coordinador: 0}]
 
   const navigate = useNavigate();
-    var idLocal = localStorage.getItem("profe");
+    //var idLocal = localStorage.getItem("profe");
+    var idLocal = 1;
     var i = 0;
     for(var i; i<profes.length; i++){
         if(profes[i]["id"] == idLocal){
           break;
         }
     }
-    var variable= localStorage.getItem("usuario");
+    var variableJSON = localStorage.getItem("usuario");
+    var variable = JSON.parse(variableJSON);
    
     var nombre = profes[i]["nombre"] + " " + profes[i]["segNombre"] + " " + profes[i]["primerAp"] + " " + profes[i]["segAp"]
     var correo = profes[i]["correo"];
@@ -28,7 +30,7 @@ export const InfoProfe = () => {
     var codigo = ""
     var esCoordinador = profes[i]["coordinador"];
     if(enEquipo == 1){
-      codigo = "Codigo: " + profes[i]["codigo"];;
+      codigo = "Codigo: " + profes[i]["sede"] + "-" + profes[i]["codigo"];
    }
    
    function agregarEquipo(){
@@ -103,7 +105,7 @@ export const InfoProfe = () => {
     
   return (
     <div>
-       <h1 class = "tituloPrincipal">Asistente Administrativo: <label id="nombreProfesor">{variable}</label></h1>  
+       <h1 class = "tituloPrincipal">Asistente Administrativo: <label id="nombreProfesor">{variable.nombreCompleto}</label></h1>  
        <div class="container ">
        <div class="row align-items-start">
           <div class="col-1 columna-izq">

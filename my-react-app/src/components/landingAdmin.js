@@ -24,9 +24,9 @@ export const LandingAdmin = () => {
     const navigate = useNavigate();
     localStorage.setItem("coordinador", 0);
     var variable= localStorage.getItem("usuario");
-    var profes = [{nombre: "Francisco", segNombre:"Jose", primerAp:"Torres", segAp:"Rojas", id:1, 
+    var profes = [{nombre: "Francisco", segNombre:"Jose", primerAp:"Torres", segAp:"Rojas", sede:"SJ", id:1, 
                       correo:"torresrojas@itcr.ac.cr", telOficina: 12345678, cel: 90123456, codigo: 123, equipo:1, coordinador: 1}, 
-                      {nombre: "Adriana", segNombre:"", primerAp:"Alvarez", segAp:"Figueroa", id:2, 
+                      {nombre: "Adriana", segNombre:"", primerAp:"Alvarez", segAp:"Figueroa", sede:"SJ", id:2, 
                       correo:"aalvarez@itcr.ac.cr", telOficina: 21212121, cel: 90909090, codigo: 456, equipo:0, coordinador: 0}]
     function creaProfesGuia(){
       for(var i = 0; i<profes.length; i++){
@@ -119,7 +119,7 @@ export const LandingAdmin = () => {
             </div>
             </div>
         <div class="col columna-cen columna">
-        <div class=" titulo">Lista de Profesores Guia</div>
+        <div class=" titulo">Profesor Guia *Sede*</div>
         <div class = "scroll" id = "colGuia">
       
        

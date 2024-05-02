@@ -13,7 +13,7 @@ export const CreaProfe = () => {
    <div className = "contenedor">
         <div>
             <form className="form-signin"> 
-            <h2 className="form-signin-heading texto-login">Agregar Profesor</h2>
+              <h2 className="form-signin-heading texto-login">Agregar Profesor</h2>
               <label class = "textoGenera">Nombre:</label>
               <input type="text" id="inputEmail" className="form-control entrada" placeholder="Nombre" required="" autoFocus=""></input>
               <label class = "textoGenera">Segundo Nombre:</label> 
@@ -24,6 +24,8 @@ export const CreaProfe = () => {
               <input type="text" id="inputPassword" className="form-control entrada" placeholder="Segundo Apellido" required=""></input>
               <label class = "textoGenera">Correo:</label>
               <input type="mail" id="inputPassword" className="form-control entrada" placeholder="Correo" required=""></input>
+              <label class = "textoGenera">Sede:</label>
+              <input type="mail" id="inputPassword" className="form-control entrada" placeholder="Sede" required=""></input>
               <label class = "textoGenera">Numero de Telefono Oficina:</label>
               <input type="number" id="inputPassword" className="form-control entrada" placeholder="Numero de Telefono Oficina" required=""></input>
               <label class = "textoGenera">Numero de Telefono Celular:</label>

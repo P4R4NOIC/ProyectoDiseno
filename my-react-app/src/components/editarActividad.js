@@ -105,19 +105,37 @@ export const EditarActividad = () => {
   };
 
 
-  const [imagenes, setImagenes] = useState([]);
-
-  const manejarCambio = (event) => {
-    const archivos = event.target.files; // Obtener la lista de archivos seleccionados
+  const handleChangeAfiche = (event) => {
+    const archivo = event.target.files[0];
+    const reader = new FileReader();
   
-    // Iterar sobre la lista de archivos y guardar sus URLs en el objeto formData
-    for (let i = 0; i < archivos.length; i++) {
-      const urlImagen = URL.createObjectURL(archivos[i]);
+    reader.onload = (event) => {
+      const base64String = event.target.result;
       setFormData(prevState => ({
         ...prevState,
-        fotosRealizada: [...prevState.fotosRealizada, urlImagen]
+        afiche: base64String,
       }));
-    }
+    };
+  
+    reader.readAsDataURL(archivo);
+  };
+  
+  const handleChangeImagenesActividad = (event) => {
+    const archivos = event.target.files;
+    const nuevasImagenes = [];
+  
+    Array.from(archivos).forEach(archivo => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64String = event.target.result;
+        nuevasImagenes.push(base64String);
+        setFormData(prevState => ({
+          ...prevState,
+          fotosRealizada: nuevasImagenes,
+        }));
+      };
+      reader.readAsDataURL(archivo);
+    });
   };
   
 
@@ -125,7 +143,8 @@ export const EditarActividad = () => {
       
       // Lógica para guardar en la base de datos
       console.log('Datos válidos, guardando en la base de datos...');
-      console.log(formData)
+      console.log(formData);
+      localStorage.setItem('datosFormulario', JSON.stringify(formData));
     
   };
 
@@ -184,10 +203,14 @@ export const EditarActividad = () => {
               </div>
               
               <label className = "textoGenera">Afiche:</label>
-              <input type="file" id="foto" name="afiche" accept = "image/*" className='form-control entrada' ></input>
+              <input type="file" id="foto" name="afiche" accept="image/*" className='form-control entrada' onChange={handleChangeAfiche}></input>
+              {formData.afiche && (
+                <img src={formData.afiche} alt="Afiche seleccionado" style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
+              )}
 
-              <label className ="textoGenera">Tipo de asistencia:</label> 
+              
               <div>
+              <label className ="textoGenera">Tipo de asistencia:</label> 
                 <select className="form-control entrada" name='tipoAsistencia' value={formData.tipoAsistencia} onChange={handleChange}>
                   <option value={"nulo"}>Seleccionar tipo de asistencia</option>
                   <option value={"Presencial"}>Presencial</option>
@@ -231,13 +254,12 @@ export const EditarActividad = () => {
                 {formData.estadoActividad === 'Realizada' && (
                   <div>
                     {/* Input para subir imágenes */}
-                    <input type="file" accept="image/*" multiple onChange={manejarCambio} />
-              
+                    <input type="file" accept="image/*" multiple onChange={handleChangeImagenesActividad} />
                     {/* Mostrar las imágenes seleccionadas */}
                     <div>
-                      {formData.fotosRealizada.map((imagen, index) => (
-                        <img key={index} src={imagen} alt={`Imagen ${index}`} style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
-                      ))}
+                    {formData.fotosRealizada.map((imagen, index) => (
+                      <img key={index} src={imagen} alt={`Imagen ${index}`} style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
+                    ))}
                     </div>
                   </div>
                 )}

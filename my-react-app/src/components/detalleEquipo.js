@@ -10,7 +10,8 @@ export const DetalleEquipo = () => {
   }else{
     var titulo = "Coordinador: "
   }
-  var variable= localStorage.getItem("usuario");
+  var variableJSON = localStorage.getItem("usuario");
+  var variable = JSON.parse(variableJSON);
   const navigate = useNavigate();
   const data = [
       { 
@@ -73,7 +74,7 @@ export const DetalleEquipo = () => {
   return (
     <div>
       <div>
-        <h1 className = "tituloPrincipal">{titulo} <label id="nombreCoordinador">{variable}</label></h1>  
+        <h1 className = "tituloPrincipal">{titulo} <label id="nombreCoordinador">{variable.nombreCompleto}</label></h1>  
         <h4 className='tituloPrincipal'> De click sobre un profesor para ver su perfil</h4>
       </div>
 
@@ -85,6 +86,8 @@ export const DetalleEquipo = () => {
                 <th>Correo</th>
                 <th>Número Oficina</th>
                 <th>Número Celular</th>
+                <th>Número de equipo</th>
+                <th>Sede</th>
             </tr>
             </thead>
             <tbody>
@@ -103,7 +106,7 @@ export const DetalleEquipo = () => {
       </div>
 
       <div>
-        <button className="button boton btn-submit" onClick={ ()=>navigate('/cronoActividad') }>Mostrar cronograma</button>
+        <button className="button boton btn-submit" onClick={ ()=>navigate('/planTrabajo') }>Mostrar planes de trabajo</button>
         <button className="button boton btn-submit" onClick={ ()=>detectarProximaActividad() }>Próxima actividad</button>
       </div>
       <div className='divVolver'>

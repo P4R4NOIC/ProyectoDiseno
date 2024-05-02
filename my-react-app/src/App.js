@@ -18,6 +18,8 @@ import { SubirExcel } from './components/subirExcel';
 import {ModProfe} from './components/modProfe';
 
 import { EditarActividad } from './components/editarActividad';
+import { PlanTrabajo } from './components/planTrabajo';
+import { CreaPlanTrabajo } from './components/creaPlanTrabajo';
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
             <Route path="/planActividad" element = {<PlanActividad/>} />
             <Route path="/subirExcel" element = {<SubirExcel/>} />
             <Route path="/editarActividad" element = {<EditarActividad/>} />
+            <Route path="/planTrabajo" element = {<PlanTrabajo/>} />
+            <Route path="/creaPlanTrabajo" element = {<CreaPlanTrabajo/>} />
           </Routes>
         </Router>
       

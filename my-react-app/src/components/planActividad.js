@@ -3,7 +3,6 @@ import "../estilosGenerales.css";
 import { useNavigate } from "react-router-dom";
 
 export const PlanActividad = () => {
-  var variable= localStorage.getItem("usuario");
   const navigate = useNavigate();
   const [semanaSeleccionada, setSemanaSeleccionada] = useState("nulo");
   const [tipoActividadSeleccionado, setActividadSeleccionada] = useState("nulo");
@@ -63,38 +62,27 @@ export const PlanActividad = () => {
     setFechasRecordatorios(nuevasFechas);
   };
 
-
-  const [imagenesGuardadas, setImagenes] = useState([]);
-  const [observacionGuardada, setObservacion] = useState('');
-
   const cambiarEstado = (event) => {
     const nuevoEstado = event.target.value;
-    // Restablecer los campos opcionales cuando cambie el estado seleccionado
-    if (tipoEstadoSeleccionado !== nuevoEstado) {
-      setImagenes([]);
-      setObservacion('');
-    }
+    
     setEstadoSeleccionado(nuevoEstado);
   }
 
 
-  const manejarImagenes = (event) => {
-    const archivos = event.target.files; // Obtener la lista de archivos seleccionados
-    const nuevasImagenes = [];
+  const [imageBase64, setImageBase64] = useState('');
 
-    // Iterar sobre la lista de archivos y guardar sus URLs en el estado
-    for (let i = 0; i < archivos.length; i++) {
-      const urlImagen = URL.createObjectURL(archivos[i]);
-      nuevasImagenes.push(urlImagen);
-    }
+  const manejarImg = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
 
-    // Actualizar el estado con la nueva lista de URLs de imágenes
-    setImagenes(nuevasImagenes);
+    reader.onload = (event) => {
+      const base64String = event.target.result;
+      setImageBase64(base64String);
+    };
+
+    reader.readAsDataURL(file);
   };
 
-  const cambiarObservacion = (event) => {
-    setObservacion(event.target.value);
-  }
 
   const guardarDatos = (event) => {
     event.preventDefault();
@@ -109,13 +97,13 @@ export const PlanActividad = () => {
         fechaPublicacion: document.getElementById('fechaPublicacion').value,
         diasPrevios: document.getElementById('diasPrevios').value,
         profesSeleccionados: profesSeleccionados,
-        afiche: document.getElementById('afiche').value,
+        afiche: imageBase64,
         tipoAsistencia: tipoAsistenciaSeleccionada,
         enlaceReunion: document.getElementById('enlaceReunion') ? document.getElementById('enlaceReunion').value : '',
         recordatorios: fechasRecordatorios,
         estadoActividad: tipoEstadoSeleccionado,
-        fotosRealizada: imagenesGuardadas,
-        observacion: observacionGuardada,
+        fotosRealizada: [],
+        observacion: '',
     };
 
     // Guardar el objeto en localStorage
@@ -128,7 +116,6 @@ export const PlanActividad = () => {
 
   return (
     <div>
-    <h1 className = "tituloPrincipal">Coordinador: <label>{variable}</label></h1>  
 
     <div className = "contenedor contenedorLargo">
         <div>
@@ -176,7 +163,7 @@ export const PlanActividad = () => {
               
               <label className = "textoGenera">Afiche:</label>
               
-              <input type="file" id="afiche" name="afiche" accept = "image/*" className='form-control entrada'></input>
+              <input type="file" id="afiche" name="afiche" accept = "image/*" className='form-control entrada' onChange={manejarImg}></input>
 
               <label className ="textoGenera">Tipo de asistencia:</label> 
               <div>
@@ -217,34 +204,8 @@ export const PlanActividad = () => {
                   <option value={"nulo"}>Seleccionar estado</option>
                   <option value={"Planeada"}>Planeada</option>
                   <option value={"Notificada"}>Notificada</option>
-                  <option value={"Realizada"}>Realizada</option>
-                  <option value={"Cancelada"}>Cancelada</option>
                 </select>
-                {tipoEstadoSeleccionado === 'Realizada' && (
-                  <div>
-                    {/* Input para subir imágenes */}
-                    <input type="file" accept="image/*" multiple onChange={manejarImagenes} />
-              
-                    {/* Mostrar las imágenes seleccionadas */}
-                    <div>
-                      {imagenesGuardadas.map((imagen, index) => (
-                        <img key={index} src={imagen} alt={`Imagen ${index}`} style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {tipoAsistenciaSeleccionada === 'Remota' && tipoEstadoSeleccionado === 'Realizada' && (
-                  <div>
-                    <label className ="textoGenera">Ingrese enlace de la reunion:</label>
-                    <input type="text" id="observacion" placeholder='Ingresar enlace' className="form-control entrada" onChange={cambiarObservacion}/>
-                  </div>
-                )}
-                {tipoEstadoSeleccionado === 'Cancelada' && (
-                  <div>
-                    <label className ="textoGenera">Ingrese observación:</label>
-                    <input type="text" id="observacion" placeholder='Ej: Hubo lluvia' className="form-control entrada" onChange={cambiarObservacion}/>
-                  </div>
-                )}
+                
               </div>
               
             

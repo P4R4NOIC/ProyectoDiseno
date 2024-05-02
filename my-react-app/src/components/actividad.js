@@ -82,7 +82,7 @@ export const Actividad = () => {
         </Table>
         <div>
           <h2>Afiche</h2>
-          <img src="haha.png" alt="haha.png" style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
+          <img src={data.afiche} alt="haha.png" style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
         </div>
       </div>
 

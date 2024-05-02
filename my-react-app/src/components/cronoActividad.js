@@ -4,7 +4,8 @@ import Table from 'react-bootstrap/Table';
 import { useNavigate } from "react-router-dom";
 
 export const CronoActividad = () => {
-  var variable = localStorage.getItem("usuario");
+  var usuarioJSON = localStorage.getItem("usuario");
+  var usuario = JSON.parse(usuarioJSON);
   const navigate = useNavigate();
 
   const data = [
@@ -69,14 +70,14 @@ export const CronoActividad = () => {
             </tbody>
         </Table>
       </div>
-      {variable === 'Coordinador' && (
+      {usuario.coordinador === 1 && (
         <div className='divVolver'>
           <button className="button boton btn-submit" onClick={ ()=> navigate('/planActividad')}>Crear actividad</button>
         </div>
       )}
-      {variable !== 'Coordinador' && (
+      {usuario.coordinador !== 1 && (
         <div className='divVolver'>
-        <button className="button boton disabled btn-submit" onClick={ ()=> navigate('/planActividad')}>Crear actividad</button>
+        <button className="button boton disabled btn-submit">Crear actividad</button>
       </div>
       )}
     
