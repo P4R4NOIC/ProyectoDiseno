@@ -3,11 +3,11 @@ import "../estilosGenerales.css";
 import { useNavigate } from "react-router-dom";
 
 export const EditarActividad = () => {
-  var variable= localStorage.getItem("usuario");
   const navigate = useNavigate();
   
 
   const [formData, setFormData] = useState({
+        id: '',
         semana: '',
         tipoActividad: '',
         nombreActividad: '',
@@ -62,7 +62,6 @@ export const EditarActividad = () => {
 
 
   // Estado para almacenar las fechas de recordatorios
-  const [fechasRecordatorios, setFechasRecordatorios] = useState([]);
   const [nuevaFecha, setNuevaFecha] = useState('');
 
   // Función para añadir una nueva fecha de recordatorio
@@ -95,7 +94,6 @@ export const EditarActividad = () => {
     event.preventDefault();
     const nuevasFechas = [...formData.recordatorios];
     nuevasFechas.splice(index, 1);
-    setFechasRecordatorios(nuevasFechas);
 
     // Actualizar el estado formData.recordatorios
     setFormData(prevState => ({
@@ -140,18 +138,63 @@ export const EditarActividad = () => {
   
 
   const guardadoEnBase = () => {
-      
+    try{
       // Lógica para guardar en la base de datos
       console.log('Datos válidos, guardando en la base de datos...');
       console.log(formData);
+      
+      validarDatos();
+      
       localStorage.setItem('datosFormulario', JSON.stringify(formData));
-    
+    }
+    catch(error){
+      alert("Error: " + error.message);
+    }
   };
+
+  const validarDatos = () => {
+      if (formData.semana === "nulo"){
+        throw new Error('La semana no puede ser nula');
+      };
+      if (formData.tipoActividad === "nulo"){
+        throw new Error('El tipo de actividad no puede ser nula');
+      };
+      if (formData.nombreActividad === ''){
+        throw new Error('El nombre de actividad no puede ser vacío');
+      };
+      if (formData.fechaActividad === ''){
+        throw new Error('La fecha de actividad no puede ser nula');
+      };
+      if (formData.horaActividad === ''){
+        throw new Error('La hora de la actividad no puede ser nula');
+      };
+      if (formData.fechaPublicacion === ''){
+        throw new Error('La fecha de publicación no puede ser nula');
+      };
+      if (formData.diasPrevios === ''){
+        throw new Error('Los días previos no pueden ser vacíos');
+      };
+      if (formData.diasPrevios === ''){
+        throw new Error('Los días previos no pueden ser vacíos');
+      };
+      if (formData.profesSeleccionados == []){
+        throw new Error('Tiene que existir al menos un profe');
+      };
+      if (formData.afiche == ''){
+        throw new Error('Tiene que agregar un afiche');
+      };
+      if (formData.tipoAsistencia == 'nulo'){
+        throw new Error('El tipo de asistencia no puede ser nulo');
+      };
+      
+        // fotosRealizada: [],
+        // estadoActividad: '',
+        // observacion: '',
+  } 
 
   return (
     <div>
-    <h1 className = "tituloPrincipal">Coordinador: <label>{variable}</label></h1>  
-
+      
     <div className = "contenedor contenedorLargo">
         <div>
             <form className="form-signin"> 
