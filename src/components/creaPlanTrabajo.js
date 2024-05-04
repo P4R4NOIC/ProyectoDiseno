@@ -8,7 +8,7 @@ export const CreaPlanTrabajo = () => {
   const [formData, setFormData] = useState({
     nombrePlan: '',
     anno: '',
-    semestre: '',
+    semestre: 'nulo',
 });
 
   const handleChange = (e) => {
@@ -20,8 +20,27 @@ export const CreaPlanTrabajo = () => {
   };
 
   const guardarPlan = () => {
+    try{
+        validarDatos();
+        
         console.log('Datos válidos, guardando en la base de datos...');
         console.log(formData)
+        
+      }catch(error){
+        alert("Error: " + error.message);
+      }
+  }
+
+  const validarDatos = () => {
+    if(formData.nombrePlan === ''){
+      throw new Error("Nombre plan no puede ser vacío");
+    }
+    if(formData.anno === ''){
+      throw new Error("Año del plan no puede ser vacío");
+    }
+    if(formData.semestre === "nulo"){
+      throw new Error("Semestre no puede ser nulo");
+    }
   }
 
   return (

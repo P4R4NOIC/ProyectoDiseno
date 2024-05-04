@@ -85,33 +85,96 @@ export const PlanActividad = () => {
 
 
   const guardarDatos = (event) => {
-    event.preventDefault();
+    try {
+      event.preventDefault();
 
-        // Construir un objeto con todos los datos del formulario
-    const datosFormulario = {
-        semana: semanaSeleccionada,
-        tipoActividad: tipoActividadSeleccionado,
-        nombreActividad: document.getElementById('nombreActividad').value,
-        fechaActividad: document.getElementById('fechaActividad').value,
-        horaActividad: document.getElementById('horaActividad').value,
-        fechaPublicacion: document.getElementById('fechaPublicacion').value,
-        diasPrevios: document.getElementById('diasPrevios').value,
-        profesSeleccionados: profesSeleccionados,
-        afiche: imageBase64,
-        tipoAsistencia: tipoAsistenciaSeleccionada,
-        enlaceReunion: document.getElementById('enlaceReunion') ? document.getElementById('enlaceReunion').value : '',
-        recordatorios: fechasRecordatorios,
-        estadoActividad: tipoEstadoSeleccionado,
-        fotosRealizada: [],
-        observacion: '',
+          // Construir un objeto con todos los datos del formulario
+      const datosFormulario = {
+          semana: semanaSeleccionada,
+          tipoActividad: tipoActividadSeleccionado,
+          nombreActividad: document.getElementById('nombreActividad').value,
+          fechaActividad: document.getElementById('fechaActividad').value,
+          horaActividad: document.getElementById('horaActividad').value,
+          fechaPublicacion: document.getElementById('fechaPublicacion').value,
+          diasPrevios: document.getElementById('diasPrevios').value,
+          profesSeleccionados: profesSeleccionados,
+          afiche: imageBase64,
+          tipoAsistencia: tipoAsistenciaSeleccionada,
+          enlaceReunion: document.getElementById('enlaceReunion') ? document.getElementById('enlaceReunion').value : '',
+          recordatorios: fechasRecordatorios,
+          estadoActividad: tipoEstadoSeleccionado,
+          fotosRealizada: [],
+          observacion: '',
+          fechaCancelacion: '',
+      };
+
+      validarDatos(datosFormulario);
+
+      // Guardar el objeto en localStorage
+      localStorage.setItem("datosFormulario", JSON.stringify(datosFormulario));
+
+      // Opcional: Mostrar una alerta o realizar alguna otra acción después de guardar los datos
+      console.log("Datos guardados correctamente en localStorage");
+      console.log(datosFormulario);
+    }catch(error){
+      alert("Error: " + error.message);
+    }
+  }
+
+  const validarDatos = (datosFormulario) => {
+    if (datosFormulario.semana === "nulo"){
+      throw new Error('La semana no puede ser nula');
+    };
+    if (datosFormulario.tipoActividad === "nulo"){
+      throw new Error('El tipo de actividad no puede ser nulo');
+    };
+    if (datosFormulario.nombreActividad === ''){
+      throw new Error('Nombre de actividad no puede ser nulo');
+    };
+    if (datosFormulario.fechaActividad === ''){
+      throw new Error('La fecha de actividad no puede ser nula');
+    };
+    if (datosFormulario.horaActividad === ''){
+      throw new Error('La hora de actividad no puede ser nula');
+    };
+    if (datosFormulario.fechaPublicacion === ''){
+      throw new Error('La fecha de publicación no puede ser nula');
+    };   
+
+    const fechaRealizacionDate = new Date(datosFormulario.fechaActividad);
+    const fechaPublicacionDate = new Date(datosFormulario.fechaPublicacion);
+    if (fechaRealizacionDate < fechaPublicacionDate) {
+      throw new Error('La fecha de publicación no puede ser posterior a la fecha de la actividad.');
+    }
+
+    if (datosFormulario.diasPrevios === ''){
+      throw new Error('Los días previos no pueden ser vacíos');
+    };
+    if (datosFormulario.profesSeleccionados.length == 0){
+      throw new Error('Debe de seleccionar al menos a un profesor');
+    };
+    if (datosFormulario.afiche === ''){
+      throw new Error('Debe de subir un afiche');
+    };
+    if (datosFormulario.tipoAsistencia === 'nulo'){
+      throw new Error('Debe de seleccionar un tipo de asistencia');
+    };
+    if (datosFormulario.tipoAsistencia === 'Remota' && datosFormulario.enlaceReunion === ''){
+      throw new Error('Debe de ingresar el enlace de reunión');
     };
 
-    // Guardar el objeto en localStorage
-    localStorage.setItem("datosFormulario", JSON.stringify(datosFormulario));
 
-    // Opcional: Mostrar una alerta o realizar alguna otra acción después de guardar los datos
-    console.log("Datos guardados correctamente en localStorage");
-    console.log(datosFormulario);
+    for (const fechaRecordatorio of datosFormulario.recordatorios) {
+      const fechaRecordatorioDate = new Date(fechaRecordatorio);
+      if (fechaRecordatorioDate > fechaRealizacionDate || fechaRecordatorioDate < fechaPublicacionDate) {
+        throw new Error('Las fechas de recordatorio deben estar dentro del rango entre la fecha de realización y la fecha de publicación.');
+      }
+    }
+
+    if (datosFormulario.estadoActividad === 'nulo'){
+      throw new Error('Debe de seleccionar un estado para la actividad');
+    };
+          
   }
 
   return (

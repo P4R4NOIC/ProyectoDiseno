@@ -23,7 +23,41 @@ export const EditarActividad = () => {
         fotosRealizada: [],
         estadoActividad: '',
         observacion: '',
+        fechaCancelacion: '',
   });
+
+  useEffect(() => {
+    if (formData.estadoActividad === 'Planeada' || formData.estadoActividad === 'Notificada') {
+      setFormData(prevState => ({
+        ...prevState,
+        fechaCancelacion: '',
+        fotosRealizada: [],
+        observacion: '',
+      }));
+    }
+  
+    if (formData.estadoActividad === 'Realizada') {
+      setFormData(prevState => ({
+        ...prevState,
+        fechaCancelacion: '',
+      }));
+    }
+  
+    if (formData.estadoActividad === 'Cancelada') {
+      const fechaActual = new Date();
+      const año = fechaActual.getFullYear();
+      const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
+      const dia = String(fechaActual.getDate()).padStart(2, '0');
+      const fechaFormateada = `${año}-${mes}-${dia}`;
+  
+      setFormData(prevState => ({
+        ...prevState,
+        fechaCancelacion: fechaFormateada,
+        fotosRealizada: [],
+      }));
+    }
+  }, [formData.estadoActividad]); // Se ejecuta cada vez que formData.estadoActividad cambia
+  
 
   useEffect(() => {
     const storedData = localStorage.getItem('datosFormulario');
@@ -137,14 +171,13 @@ export const EditarActividad = () => {
   };
   
 
-  const guardadoEnBase = () => {
+  const guardadoEnBase = async () => {
     try{
       // Lógica para guardar en la base de datos
+      await validarDatos();
+  
       console.log('Datos válidos, guardando en la base de datos...');
       console.log(formData);
-      
-      validarDatos();
-      
       localStorage.setItem('datosFormulario', JSON.stringify(formData));
     }
     catch(error){
@@ -152,7 +185,8 @@ export const EditarActividad = () => {
     }
   };
 
-  const validarDatos = () => {
+  
+  async function validarDatos() {
       if (formData.semana === "nulo"){
         throw new Error('La semana no puede ser nula');
       };
@@ -171,25 +205,59 @@ export const EditarActividad = () => {
       if (formData.fechaPublicacion === ''){
         throw new Error('La fecha de publicación no puede ser nula');
       };
+
+      const fechaRealizacionDate = new Date(formData.fechaActividad);
+      const fechaPublicacionDate = new Date(formData.fechaPublicacion);
+      if (fechaRealizacionDate < fechaPublicacionDate) {
+        throw new Error('La fecha de publicación no puede ser posterior a la fecha de la actividad.');
+      }
+
       if (formData.diasPrevios === ''){
         throw new Error('Los días previos no pueden ser vacíos');
       };
-      if (formData.diasPrevios === ''){
-        throw new Error('Los días previos no pueden ser vacíos');
+      if (formData.profesSeleccionados.length == 0){
+        throw new Error('Debe de seleccionar al menos a un profesor');
       };
-      if (formData.profesSeleccionados == []){
-        throw new Error('Tiene que existir al menos un profe');
-      };
-      if (formData.afiche == ''){
+      if (formData.afiche === ''){
         throw new Error('Tiene que agregar un afiche');
       };
       if (formData.tipoAsistencia == 'nulo'){
         throw new Error('El tipo de asistencia no puede ser nulo');
       };
+      if (formData.tipoAsistencia === 'Remota' && formData.enlaceReunion === ''){
+        throw new Error('Debe de ingresar el enlace de reunión');
+      };
+
+      for (const fechaRecordatorio of formData.recordatorios) {
+        const fechaRecordatorioDate = new Date(fechaRecordatorio);
+        if (fechaRecordatorioDate > fechaRealizacionDate || fechaRecordatorioDate < fechaPublicacionDate) {
+          throw new Error('Las fechas de recordatorio deben estar dentro del rango entre la fecha de realización y la fecha de publicación.');
+        }
+      }
+
+      if (formData.estadoActividad === 'nulo'){
+        throw new Error('Debe de seleccionar un estado para la actividad');
+      };
       
-        // fotosRealizada: [],
-        // estadoActividad: '',
-        // observacion: '',
+      if (formData.estadoActividad === 'Realizada'){
+        if (formData.tipoAsistencia === 'Presencial'){
+          if (formData.fotosRealizada.length == 0){
+            throw new Error('Tiene que agregar evidencia en forma de una o varias fotos');
+          };
+        };
+
+        if (formData.tipoAsistencia === 'Remota'){
+          if (formData.fotosRealizada.length == 0 && formData.observacion === ''){
+            throw new Error('Tiene que agregar evidencia en forma de una o varias fotos, o agregar el enlace para acceder a la grabación');
+          };
+        };
+      };
+
+      if (formData.estadoActividad === 'Cancelada'){
+        if (formData.observacion === ''){
+          throw new Error('Tiene que agregar una observación');
+        };
+      };
   } 
 
   return (

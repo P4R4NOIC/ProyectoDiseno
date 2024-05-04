@@ -45,6 +45,7 @@ function App() {
             <Route path="/editarActividad" element = {<EditarActividad/>} />
             <Route path="/planTrabajo" element = {<PlanTrabajo/>} />
             <Route path="/creaPlanTrabajo" element = {<CreaPlanTrabajo/>} />
+          
           </Routes>
         </Router>
       

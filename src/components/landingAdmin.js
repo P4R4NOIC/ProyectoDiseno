@@ -51,25 +51,52 @@ export const LandingAdmin = () => {
         
       }
     }
-    console.log(parseFloat(0.1*0.2).toPrecision(12))
-    console.log(0.1*0.2)
- 
+    var excelActual = [{
+      "Carnet": 2021086368,
+      "Nombre": "Fernando",
+      "Segundo Nombre": "Jose",
+      "Apellido": "Gross",
+      "Segundo Apellido": "Hernandez",
+      "Correo": "fergross0602@estudiantec.cr",
+      "Cel": 86253351,
+      "Sede": "San Jose"
+  },{
+    "Carnet": 1111111111,
+    "Nombre": "Roberto",
+    "Segundo Nombre": "Daniel",
+    "Apellido": "Vindas",
+    "Segundo Apellido": "Hernandez",
+    "Correo": "rvindas@estudiantec.cr",
+    "Cel": 88888888,
+    "Sede": "San Jose"
+}, {
+  "Carnet": 2222222222,
+  "Nombre": "Gabriel",
+  "Segundo Nombre": "De Jesus",
+  "Apellido": "Jimenez",
+  "Segundo Apellido": "Ocampo",
+  "Correo": "gabops@estudiantec.cr",
+  "Cel": 99999999,
+  "Sede": "San Jose"
+}, {
+  "Carnet": 3333333333,
+  "Nombre": "Dylan",
+  "Segundo Nombre": "Andrey",
+  "Apellido": "Mora",
+  "Segundo Apellido": "Corrales",
+  "Correo": "dlmora@estudiantec.cr",
+  "Cel": 22222222,
+  "Sede": "San Jose"
+}]
+    
     function creaEstudiantes(){
-      var datos;
-      fetch("/excels/estudiantes.xlsx")
-      .then((res) => res.arrayBuffer())
-      .then((ab) => {
-        const workbook = XLSX.read(ab, { type: "array" });
-        const sheetName = workbook.SheetNames[0]
-        const sheet = workbook.Sheets[sheetName]
-        datos = XLSX.utils.sheet_to_json(sheet);
-        for(var i = 0; i<datos.length; i++){
-          var div = document.createElement("div");
-          div.classList = "textoCaja";
-          div.textContent = datos[i]["Nombre"] + " " + datos[i]["Segundo Nombre"] + " " + datos[i]["Apellido"] + " " + datos[i]["Segundo Apellido"];
-          document.getElementById("colEst").appendChild(div);
-        }
-      });
+      for(var i = 0; i < excelActual.length;i++){
+        var div = document.createElement("div");
+        div.classList = "textoCaja";
+        div.textContent = excelActual[i]["Nombre"] + " " + excelActual[i]["Segundo Nombre"] + " " + excelActual[i]["Apellido"] + " " + excelActual[i]["Segundo Apellido"];
+        document.getElementById("colEst").appendChild(div);
+      }
+      
       
     }
 
