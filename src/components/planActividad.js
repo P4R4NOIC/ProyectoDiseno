@@ -84,7 +84,7 @@ export const PlanActividad = () => {
   };
 
 
-  const guardarDatos = (event) => {
+  const guardarDatos = async (event) => {
     try {
       event.preventDefault();
 
@@ -110,12 +110,10 @@ export const PlanActividad = () => {
 
       validarDatos(datosFormulario);
 
-      // Guardar el objeto en localStorage
-      localStorage.setItem("datosFormulario", JSON.stringify(datosFormulario));
+      // Guardar el objeto 
+      //await subirDatos(datosFormulario);
 
-      // Opcional: Mostrar una alerta o realizar alguna otra acción después de guardar los datos
-      console.log("Datos guardados correctamente en localStorage");
-      console.log(datosFormulario);
+      
     }catch(error){
       alert("Error: " + error.message);
     }
@@ -176,6 +174,24 @@ export const PlanActividad = () => {
     };
           
   }
+
+  async function subirDatos(formData) {
+    try{
+      const response = await fetch('https://ejemplo.com/api/endpoint', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error('Error al subir datos');
+      }
+    }catch(error){
+      console.error('Error al subir datos:', error.message);
+    }
+  }
+  
 
   return (
     <div>

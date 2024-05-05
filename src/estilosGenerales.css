@@ -6,13 +6,40 @@
     font-family: arial;
     font-size: 20px;
 }
-
+.comentario{
+  background-color: #1f1e1e;
+  color: white;
+}
 .excelInput{
   width: 800px;
   margin-top: 25px;
   margin-left: 45px;
 }
+.comentarioCaja{
+  border: solid;
+  font-size: 20px;
+  background-color:#4371cc;
 
+}
+.subcomentarioCaja{
+  border: solid;
+  font-size: 20px;
+  background-color:#2157c2;
+  border-color: #8091d2;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+.textoSub{
+  margin-left: 10px;
+}
+.tituloSub{
+  margin-top: 20px;
+}
+.botonComentario{
+ background-color: #0b6273;
+ color: white;
+ margin-left: 93%;
+}
 .contenedor{
   margin-top: 45px;
  display: inline-block;

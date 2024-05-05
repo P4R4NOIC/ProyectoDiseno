@@ -31,11 +31,12 @@ export const ModEstudiante = () => {
     }));
   };
 
-  const guardadoEnBase = () => {
+  const guardadoEnBase = async () => {
     if (validarForm()) {
       // Lógica para guardar en la base de datos
       console.log('Datos válidos, guardando en la base de datos...');
       console.log(formData)
+      //await subirDatos(formData);
     }
   };
   const phoneRegex = /^[0-9]{10}$/;
@@ -57,6 +58,23 @@ export const ModEstudiante = () => {
 
     return true;
   };
+
+  async function subirDatos(formData) {
+    try{
+      const response = await fetch('https://ejemplo.com/api/endpoint', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error('Error al subir datos');
+      }
+    }catch(error){
+      console.error('Error al subir datos:', error.message);
+    }
+  }
 
   return (
     <div className='cajaBasica'>

@@ -146,7 +146,7 @@ export const LandingAdmin = () => {
             </div>
             </div>
         <div class="col columna-cen columna">
-        <div class=" titulo">Profesor Guia *Sede*</div>
+        <div class=" titulo">Profesores Guia</div>
         <div class = "scroll" id = "colGuia">
       
        
@@ -154,7 +154,7 @@ export const LandingAdmin = () => {
         </div>
         </div>
         <div class="col columna-der columna">
-        <div class=" titulo"> Lista de Profesores</div>
+        <div class=" titulo"> Lista de Profesores *sede*</div>
         <div class = "scroll" id = "colProfes">
         
         </div>

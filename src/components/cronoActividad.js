@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Table from 'react-bootstrap/Table';
 
 import { useNavigate } from "react-router-dom";
@@ -32,12 +32,69 @@ export const CronoActividad = () => {
     }
   ];
 
-  const handleClick = (rowData) => {
-    var idActual = rowData.id;
-    localStorage.setItem("idActividadActual",idActual);
+  //const [data, setDatos] = useState([]);
+
+  useEffect(() => {
+    const obtenerInfo = async () => {
+      try {
+        const response = await fetch(`http://18.222.222.154:5000/planes/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al obtener los datos del detalle de equipo');
+        }
+
+        const data = await response.json(); // Parsear la respuesta a formato JSON
+
+        // Procesar los datos y establecer el estado
+        
+        console.log(data);
+        //setDatos(data); // Establecer los datos en el estado
+
+      } catch (error){
+        console.error('Error al obtener los datos:', error.message);
+      }
+    };
+
+    obtenerInfo(); 
+  }, []);
+
+  const handleClick = async (rowData) => {
+    
+    //const objetoActividad = await pedirActividad(rowData.id);
+    //await localStorage.setItem("actividadActual", objetoActividad);
     
     navigate('/actividad');
   };
+
+  const pedirActividad = async (idActividad) => {
+    try {
+        
+        const response = await fetch(`http://18.222.222.154:5000/profes/guia`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // Verificar si la respuesta es exitosa
+        if (!response.ok) {
+          // Si la respuesta no es exitosa, lanzar un error
+          throw new Error('Error al obtener la próxima actividad');
+        }
+
+        // Convertir la respuesta a formato JSON
+        const data = await response.json();
+        return data;
+        
+    } catch (error){
+      throw new Error('Error: ' + error.message);
+    }
+  }
 
   return (
     <div>

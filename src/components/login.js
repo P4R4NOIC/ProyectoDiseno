@@ -13,28 +13,23 @@ async function validaCorreo(){
   var email = document.getElementById("inputEmail").value;
   var contrasena = document.getElementById("inputPassword").value
 
+  if (email === '' || contrasena == ''){
+    throw new Error ('Los campos no pueden ser vacios');
+  }
+
   const sesionUsuario = await obtenerSesionUsuario(email, contrasena);
   
-  //const usuario = await autenticarUsuario(email, contrasena, sesionUsuario);
-  const usuario = {
-    "nombreCompleto": 'Roberto',
-    "contraseña": contrasena,
-    "correo": email, 
-    "activo": 1,
-    "telefono": 20000000,
-    "celular": 84848484, 
-    "codigoSede": "AL-500", 
-    "coordinador": 1,
-    "foto": 'direccion',
-    "idSede": 2,
-  }
-  localStorage.setItem('usuario', JSON.stringify(usuario));
-
+  const usuario = await autenticarUsuario(email, contrasena, sesionUsuario);
+  
+  await localStorage.setItem('usuario', JSON.stringify(usuario));
+  
   if (sesionUsuario === 'PROFESOR') {
+    localStorage.setItem('sesionUsuario', sesionUsuario);
     navigate('/landingProfesor');
   } else if (sesionUsuario === 'INVALID') {
     throw new Error('Dirección inválida o contraseña incorrecta');
   } else {
+      localStorage.setItem('sesionUsuario', sesionUsuario);
       navigate('/landingAdmin');
   }
 
@@ -74,32 +69,58 @@ const obtenerSesionUsuario = async (email, contrasena) =>{
   
 }
 
-const autenticarUsuario = async (email, contrasena, tipoSesion) => {
+const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
   try {
-      const response = await fetch(`https://tu-api-url.com/${tipoSesion}?correo=${email}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // Aquí podrías incluir otros headers como tokens de autenticación si es necesario
-        },
-      });
+      if(sesionUsuario === 'PROFESOR'){
+        const response = await fetch(`http://18.222.222.154:5000/profes/guia/${email}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-      // Verificar si la respuesta es exitosa
-      if (!response.ok) {
-        // Si la respuesta no es exitosa, lanzar un error
-        throw new Error('Error al obtener los datos del usuario');
-      }
+        // Verificar si la respuesta es exitosa
+        if (!response.ok) {
+          // Si la respuesta no es exitosa, lanzar un error
+          throw new Error('Error al obtener los datos del usuario');
+        }
 
-      // Convertir la respuesta a formato JSON
-      const data = await response.json();
-      // Devolver los datos del usuario
-      if(contrasena === data.contrasena){
+        // Convertir la respuesta a formato JSON
+        const data = await response.json();
+        // Devolver los datos del usuario
+        if(data.contraseña === null){
+          throw new Error('Usted no es un profesor guía, no puede iniciar sesión');
+        }
+        if(contrasena !== data.contraseña){
+          throw new Error('Tokens no validos');
+        } 
         return data;
-      } else{
-        throw new Error('Tokens no validos');
+        
+      }else{
+        const response = await fetch(`http://18.222.222.154:5000/profes/guia/${email}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // Verificar si la respuesta es exitosa
+        if (!response.ok) {
+          // Si la respuesta no es exitosa, lanzar un error
+          throw new Error('Error al obtener los datos del usuario');
+        }
+
+        // Convertir la respuesta a formato JSON
+        const data = await response.json();
+        // Devolver los datos del usuario
+        if(contrasena === data.contraseña){
+          return data;
+        } else{
+          throw new Error('Tokens no validos');
+        }
       }
   } catch (error){
-    throw new Error('Error al obtener los datos del usuario: ' + error.message);
+    throw new Error(error.message);
   }
 }
 

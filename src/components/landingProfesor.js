@@ -6,7 +6,7 @@ export const LandingProfesor = () => {
   const navigate = useNavigate();
   var usuarioJSON = localStorage.getItem("usuario");
   var usuario = JSON.parse(usuarioJSON);
-  
+
   function cierreSesion(){
     localStorage.clear();
     navigate('/login');

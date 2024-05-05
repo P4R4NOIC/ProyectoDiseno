@@ -1,57 +1,101 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Table from 'react-bootstrap/Table';
 
 import { useNavigate } from "react-router-dom";
 
 export const PlanTrabajo = () => {
-    const navigate = useNavigate();
+    var usuarioJSON = localStorage.getItem("usuario");
+    var usuario = JSON.parse(usuarioJSON);
     var titulo = '';
-    if(localStorage.getItem("conexion") === "ADMIN"){
-            titulo = "Asistente Administrativo: "
+    if(localStorage.getItem("sesionUsuario") === "PROFESOR"){
+      if (usuario.coordinador === 1) {
+        titulo = "Coordinador: "
+      }
+      else{
+        titulo = "Profesor Guía: "
+      }
     }else{
-            titulo = "Coordinador: "
+        titulo = "Asistente Administrativo: "
     }
-  var usuarioJSON = localStorage.getItem("usuario");
-  var usuario = JSON.parse(usuarioJSON);
+  const navigate = useNavigate();
   
-  const data = [
-      { 
-        id: 1,
-        nombrePlan: "Plan sublime", 
-        anno: 2024,
-        semestre: "Primer",
-      },
-      {
-        id: 2,
-        nombrePlan: "Plan agotador",
-        anno: 2024,
-        semestre: "Segundo",
-      },
-      { 
-        id: 3,
-        nombrePlan: "Plan definitivo",
-        anno: 2025,
-        semestre: "Primer",
-      },
-  ];
+  const [data, setDatos] = useState([]);
 
-  const handleClick = (rowData) => {
-    
-    // Convertir rowData en un objeto
-    const objetoParaGuardar = {
-      id: rowData.id,
-      nombrePlan: rowData.nombrePlan,
-      anno: rowData.anno,
-      semestre: rowData.semestre,
+  useEffect(() => {
+    const obtenerInfo = async () => {
+      try {
+        const response = await fetch(`http://18.222.222.154:5000/planes/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al obtener los datos del detalle de equipo');
+        }
+
+        const data = await response.json(); // Parsear la respuesta a formato JSON
+
+        // Procesar los datos y establecer el estado
+        
+        console.log(data);
+        setDatos(data); // Establecer los datos en el estado
+
+      } catch (error){
+        console.error('Error al obtener los datos:', error.message);
+      }
     };
 
-    // Guardar el objeto en localStorage
-    localStorage.setItem("PlanTrabajoIndividual", JSON.stringify(objetoParaGuardar));
-    var infoPlanTrabajoJSON = localStorage.getItem("PlanTrabajoIndividual");
-    //var infoPlanTrabajo = JSON.parse(infoPlanTrabajoJSON);
-    console.log(infoPlanTrabajoJSON);
+    obtenerInfo(); 
+  }, []);
+
+
+
+  const handleClick = async (rowData) => {
+    
+    //const listaActividades = await pedirListaActividades(rowData.id);
+
+    //localStorage.setItem("listaActividades", JSON.stringify(listaActividades));
+    //console.log(listaActividades);
     navigate('/cronoActividad');
   };
+
+  const pedirListaActividades = async (idPlan) => {
+    try {
+      const response = await fetch(`http://18.222.222.154:5000/profes/detalle`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al obtener los datos del detalle de equipo');
+      }
+
+      const data = await response.json(); // Parsear la respuesta a formato JSON
+
+      // Procesar los datos y establecer el estado
+      const datosParseados = data.map(arregloInterior => {
+        return arregloInterior.map(objeto => {
+          return {
+            id: objeto.idEquipo, 
+            nombreCompleto: objeto.nombreCompleto, 
+            correo: objeto.correo,
+            numOficina: objeto.telefono, 
+            numCel: objeto.celular,
+            codigoSede: objeto.codigoSede
+          };
+        });
+      });
+      console.log(datosParseados);
+      return datosParseados;
+
+    } catch (error){
+      console.error('Error al obtener los datos:', error.message);
+    }
+  }
 
   return (
     <div>
@@ -64,7 +108,7 @@ export const PlanTrabajo = () => {
         <Table striped bordered hover variant='dark'>
             <thead>
             <tr>
-                <th>Nombre Plan de Trabajo</th>
+                <th>Equipo</th>
                 <th>Año</th>
                 <th>Semestre</th>
             </tr>
@@ -73,8 +117,8 @@ export const PlanTrabajo = () => {
               {data.map((val, key) => {
                   return (
                       <tr key={key} onClick={() => handleClick(val)}>
-                          <td>{val.nombrePlan}</td>
-                          <td>{val.anno}</td>
+                          <td>{val.equipo}</td>
+                          <td>{val.año}</td>
                           <td>{val.semestre}</td>
                       </tr>
                   )
@@ -82,10 +126,17 @@ export const PlanTrabajo = () => {
             </tbody>
         </Table>
       </div>
-
-      <div>
-        <button className="button boton btn-submit" onClick={ ()=>navigate('/creaPlanTrabajo') }>Crear plan de trabajo</button>
-      </div>
+      {usuario.coordinador === 1 && (
+        <div>
+          <button className="button boton btn-submit" onClick={ ()=>navigate('/creaPlanTrabajo') }>Crear plan de trabajo</button>
+        </div>
+      )}
+      {usuario.coordinador !== 1 && (
+        <div>
+          <button className="button boton disabled btn-submit">Crear plan de trabajo</button>
+        </div>
+      )}
+      
       <div className='divVolver'>
         <button className="button boton btn-submit" onClick={ ()=> navigate(-1)}>Volver</button>
       </div>

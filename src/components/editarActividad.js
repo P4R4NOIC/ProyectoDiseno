@@ -178,6 +178,7 @@ export const EditarActividad = () => {
   
       console.log('Datos válidos, guardando en la base de datos...');
       console.log(formData);
+      //await subirDatos(formData);
       localStorage.setItem('datosFormulario', JSON.stringify(formData));
     }
     catch(error){
@@ -259,6 +260,23 @@ export const EditarActividad = () => {
         };
       };
   } 
+
+  async function subirDatos(formData) {
+    try{
+      const response = await fetch('https://ejemplo.com/api/endpoint', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error('Error al subir datos');
+      }
+    }catch(error){
+      console.error('Error al subir datos:', error.message);
+    }
+  }
 
   return (
     <div>

@@ -66,7 +66,7 @@ export const SubirExcel = () => {
       excelActual["excel"] = jsonArray
      
       excelActual["nombre"] = file["name"]
-      console.log(excelActual["excel"])
+      console.log(excelActual)
       
     };
     reader.readAsArrayBuffer(file);
@@ -85,6 +85,7 @@ export const SubirExcel = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
 
     XLSX.writeFile(workbook, "Employee Lists.xlsx", { compression: true });
+
   }
   
   const handleClickButton = () => {
