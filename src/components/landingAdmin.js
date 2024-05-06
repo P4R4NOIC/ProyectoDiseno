@@ -51,45 +51,35 @@ export const LandingAdmin = () => {
         
       }
     }
-    var excelActual = [{
-      "Carnet": 2021086368,
-      "Nombre": "Fernando",
-      "Segundo Nombre": "Jose",
-      "Apellido": "Gross",
-      "Segundo Apellido": "Hernandez",
-      "Correo": "fergross0602@estudiantec.cr",
-      "Cel": 86253351,
-      "Sede": "San Jose"
-  },{
-    "Carnet": 1111111111,
-    "Nombre": "Roberto",
-    "Segundo Nombre": "Daniel",
-    "Apellido": "Vindas",
-    "Segundo Apellido": "Hernandez",
-    "Correo": "rvindas@estudiantec.cr",
-    "Cel": 88888888,
-    "Sede": "San Jose"
-}, {
-  "Carnet": 2222222222,
-  "Nombre": "Gabriel",
-  "Segundo Nombre": "De Jesus",
-  "Apellido": "Jimenez",
-  "Segundo Apellido": "Ocampo",
-  "Correo": "gabops@estudiantec.cr",
-  "Cel": 99999999,
-  "Sede": "San Jose"
-}, {
-  "Carnet": 3333333333,
-  "Nombre": "Dylan",
-  "Segundo Nombre": "Andrey",
-  "Apellido": "Mora",
-  "Segundo Apellido": "Corrales",
-  "Correo": "dlmora@estudiantec.cr",
-  "Cel": 22222222,
-  "Sede": "San Jose"
-}]
-    
-    function creaEstudiantes(){
+    var excelActual;
+const getExcel = async () => {
+  try {
+   
+        const response = await fetch(`http://18.222.222.154:5000/excel/recuperar/estudiantes.xlsx`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // Verificar si la respuesta es exitosa
+        if (!response.ok) {
+          // Si la respuesta no es exitosa, lanzar un error
+          throw new Error('Error al obtener los datos del usuario');
+        }
+
+        // Convertir la respuesta a formato JSON
+        const data = await response.json();
+       console.log(data)
+        return data;
+        
+      
+  } catch (error){
+    throw new Error(error.message);
+  }
+}
+   async function creaEstudiantes(){
+      const excelActual = await getExcel();
       for(var i = 0; i < excelActual.length;i++){
         var div = document.createElement("div");
         div.classList = "textoCaja";

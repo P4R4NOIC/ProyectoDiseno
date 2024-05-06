@@ -66,7 +66,16 @@ export const SubirExcel = () => {
       excelActual["excel"] = jsonArray
      
       excelActual["nombre"] = file["name"]
+      var enviar = JSON.stringify(excelActual)
       console.log(excelActual)
+      fetch('http://18.222.222.154:5000/excel/subir', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: enviar
+    })
+     // console.log(excelActual)
       
     };
     reader.readAsArrayBuffer(file);
