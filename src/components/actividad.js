@@ -7,43 +7,36 @@ import Table from 'react-bootstrap/Table';
 
 export const Actividad = () => {
   const navigate = useNavigate();
-  var actividadJSON = localStorage.getItem("actividadActual");
-  var info = JSON.parse(actividadJSON);
-  var comentarios = [{nombre: "Adriana Alvarez", comentario:"Actividad de mierda asi al puro vuela", 
-                      subComentarios:[{nombre:"Francisco Torres", comentario:"Me cago en todo"}, 
-                      {nombre:"Adriana Alvarez", comentario:"Me cago en todo"}]},
+  var infoJSON = localStorage.getItem("actividadActual");
+  var info = JSON.parse(infoJSON);
+  
+  // var comentarios = [{nombre: "Adriana Alvarez", comentario:"Actividad de mierda asi al puro vuela", 
+  //                     subComentarios:[{nombre:"Francisco Torres", comentario:"Me cago en todo"}, 
+  //                     {nombre:"Adriana Alvarez", comentario:"Me cago en todo"}]},
 
 
-                      {nombre: "Francisco Torres", comentario:"Actividad de mierda asi al puro vuela", 
-                      subComentarios:[{nombre:"Adriana Alvarez", comentario:"Me cago en todo"}, 
-                      {nombre:"Adriana Alvarez", comentario:"Me cago en todo"}]}];
+  //                     {nombre: "Francisco Torres", comentario:"Actividad de mierda asi al puro vuela", 
+  //                     subComentarios:[{nombre:"Adriana Alvarez", comentario:"Me cago en todo"}, 
+  //                     {nombre:"Adriana Alvarez", comentario:"Me cago en todo"}]}];
 
-  var usuarioJSON = localStorage.getItem("usuario");
-  var usuario = JSON.parse(usuarioJSON);
-  //const data = info;
-  const data = {
-      semana: "Semana1",
-      tipoActividad: "Orientadoras",
-      nombreActividad: "Mi Actividad",
-      fechaActividad: "2024-05-03",
-      horaActividad: "23:51",
-      fechaPublicacion: "2024-05-03",
-      diasPrevios: "1",
-      profesSeleccionados: [
-          "Profe 1"
-      ],
-      afiche: "haha.png",
-      tipoAsistencia: "Remota",
-      enlaceReunion: "http://localhost:3000/actividad",
-      recordatorios: [],
-      estadoActividad: "Notificada",
-      fotosRealizada: [],
-      observacion: ""
-  }
+  // var usuarioJSON = localStorage.getItem("usuario");
+  // var usuario = JSON.parse(usuarioJSON);
+  var usuario = {nombre: "Roberto"}
+  const data = info;
   
   console.log(data);
 
+  const comentariosActividad = data.valoresGenerales.comentarios;
 
+  // Mapea los comentarios al formato deseado
+  const comentarios = comentariosActividad.map(comentario => ({
+    nombre: comentario.nombreCompleto + " - " + comentario.fechaEmision,
+    comentario: comentario.comentario,
+    subComentarios: comentario.respuestas.map(respuesta => ({
+      nombre: respuesta.nombreCompleto + " - " + respuesta.fechaEmision,
+      comentario: respuesta.respuesta
+    }))
+  }));
 
   function enviarComentario(id, numero){
   
@@ -135,7 +128,7 @@ export const Actividad = () => {
       div1.classList = "cajaTabla comentarioCaja"
       div1.id = "comentarios" + i
   
-      label1.textContent = comentarios[i]["nombre"]
+      label1.textContent = comentarios[i]["nombre"] 
       label2.textContent = comentarios[i]["comentario"]
 
       button1.classList = "botonComentario"
@@ -177,8 +170,6 @@ export const Actividad = () => {
      
 
 
-/*
-      */
       textArea.hidden = true;
       button2.hidden = true;
       div1.appendChild(textArea)
@@ -194,9 +185,21 @@ export const Actividad = () => {
     cargarComentarios();
    
      }, [])
-  return (
+  
+  // Obtén las fechas de inicio y fin
+  const fechaInicio = new Date(data.valoresGenerales.fechaPublicacion);
+  const fechaFin = new Date(data.valoresGenerales.fechaRealizacion);
+
+  // Calcula la diferencia en milisegundos
+  const diferenciaMs = fechaFin - fechaInicio;
+
+  // Convierte la diferencia de milisegundos a días
+  const diferenciaDias = Math.floor(diferenciaMs / (1000 * 60 * 60 * 24));
+
+
+     return (
     <div id = "documento">
-      <h1 className = "tituloPrincipal">Actividad: <label>{data.nombreActividad}</label></h1>  
+      <h1 className = "tituloPrincipal">Actividad: <label>{data.valoresGenerales.nombre}</label></h1>  
       <div className='divVolver'>
         
         {usuario.coordinador === 1 && (
@@ -214,62 +217,87 @@ export const Actividad = () => {
                     <th>Semana</th>
                     <th>Tipo de Actividad</th>
                     <th>Fecha de Actividad</th>
-                    <th>Hora de Actividad</th>
                     <th>Fecha de Publicación</th>
                     <th>Días Previos</th>
                     <th>Profes Seleccionados</th>
                     <th>Asistencia</th>
-                    {data.tipoAsistencia === 'Remota' && (
+                    {data.valoresGenerales.modalidad === 'Remota' && (
                         <th>Enlace de Reunión</th>
+                    )}
+                    {data.valoresGenerales.modalidad === 'Presencial' && (
+                        <th>Ubicación de Reunión</th>
                     )}
                     <th>Recordatorios</th>
                     <th>Estado de Actividad</th>
-                    <th>Fotos Realizadas</th>
-                    <th>Observación</th>
+                    {data.valoresGenerales.estado === 'Realizada' && (
+                        <th>Fotos Realizadas</th>
+                    )}
+                    {data.valoresGenerales.estado === 'Realizada' && data.valoresGenerales.modalidad === 'Remota' && (
+                        <th>Enlace de grabación</th>
+                    )}
+                    {data.valoresGenerales.estado === 'Cancelada' && (
+                        <th>Observación</th>
+                    )}
+                    
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>{data.semana}</td>
-                    <td>{data.tipoActividad}</td>
-                    <td>{data.fechaActividad}</td>
-                    <td>{data.horaActividad}</td>
-                    <td>{data.fechaPublicacion}</td>
-                    <td>{data.diasPrevios}</td>
-                    <td>{data.profesSeleccionados.join(', ')}</td>
-                    <td>{data.tipoAsistencia}</td>
-                    {data.tipoAsistencia === 'Remota' && (
-                        <td>{data.enlaceReunion}</td>
-                    )}
+                    <td>{data.valoresGenerales.semana}</td>
+                    <td>{data.valoresGenerales.tipo}</td>
+                    <td>{data.valoresGenerales.fechaRealizacion}</td>
+                    <td>{data.valoresGenerales.fechaPublicacion}</td>
+                    <td>{diferenciaDias}</td>
                     <td>
                         <ul>
-                          {data.recordatorios ? data.recordatorios.map((recordatorio, index) => (
-                              <li key={index}>{recordatorio}</li>
+                          {data.valoresGenerales.responsables ? data.valoresGenerales.responsables.map((responsable, index) => (
+                              <li key={index}>{responsable.nombre}</li>
                           )) : null}
                         </ul>
                     </td>
-                    <td>{data.estadoActividad}</td>
+                    <td>{data.valoresGenerales.modalidad}</td>
+                    {data.valoresGenerales.modalidad === 'Remota' && (
+                        <td>{data.valoresGenerales.direccion}</td>
+                    )}
+                    {data.valoresGenerales.modalidad === 'Presencial' && (
+                        <th>{data.valoresGenerales.direccion}</th>
+                    )}
                     <td>
                         <ul>
-                            {data.fotosRealizada.map((imagen, index) => (
-                                <img key={index} src={imagen} alt={`Imagen ${index}`} style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
-                            ))}
-                            
+                          {data.valoresGenerales.fechaRecordatorio ? data.valoresGenerales.fechaRecordatorio.map((recordatorio, index) => (
+                              <li key={index}>{recordatorio.fechaR}</li>
+                          )) : null}
                         </ul>
                     </td>
-                    <td>{data.observacion}</td>
+                    <td>{data.valoresGenerales.estado}</td>
+                    {data.valoresGenerales.estado === 'Realizada' && (
+                    <td>
+                        <ul>
+                          {data.fotos ? data.fotos.map((imagen, index) => (
+                              <img key={index} src={imagen} alt={`Imagen ${index}`} style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
+                          )) : null}
+                        </ul>
+                    </td>
+                    )}
+                    {data.valoresGenerales.estado === 'Realizada' && data.valoresGenerales.modalidad === 'Remota' && (
+                        <td>{data.valoresGenerales.direccion}</td>
+                    )}
+                    {data.valoresGenerales.estado === 'Cancelada' && (
+                        <td>{data.descripcionCancelacion}</td>
+                    )}
+                    
                 </tr>
             </tbody>
         </Table>
         <div>
           <h2>Afiche</h2>
-          <img src={data.afiche} alt="haha.png" style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
+          <img src={data.valoresGenerales.afiche} alt={data.valoresGenerales.afiche} style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
         </div>
       </div>
 
       <div className='cajaTabla'>
         <h2>Escribir un Comentario</h2>
-      <textarea class = "comentario" id="comentario" name="story" rows="5" cols="200" placeholder='Comentario'>
+      <textarea className = "comentario" id="comentario" name="story" rows="5" cols="200" placeholder='Comentario'>
 
       </textarea>
         <button className="button boton btn-submit" onClick={ ()=> agregarComentario()}>Agregar comentario</button>

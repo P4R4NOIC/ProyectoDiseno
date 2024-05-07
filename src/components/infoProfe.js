@@ -4,31 +4,41 @@ import "../estilosGenerales.css"
 import "../estilosInfoProfe.css"
 import { useEffect } from 'react'
 export const InfoProfe = () => {
-  var profes = [{nombre: "Francisco", segNombre:"Jose", primerAp:"Torres", segAp:"Rojas",sede:"SJ", id:1, 
-                      correo:"torresrojas@itcr.ac.cr", telOficina: 12345678, cel: 90123456, codigo: 1, equipo:1, coordinador: 1},
-
-                      {nombre: "Adriana", segNombre:"", primerAp:"Alvarez", segAp:"Figueroa",sede:"SJ", id:2, 
-                      correo:"aalvarez@itcr.ac.cr", telOficina: 21212121, cel: 90909090, codigo: 2, equipo:0, coordinador: 0}]
-
+  var profes;
+  if(localStorage.getItem("desplegarGuias") == 1){
+    profes = JSON.parse(localStorage.getItem("profes"))["profesGuia"][0]
+    console.log(profes)
+    //profes = JSON.parse(localStorage.getItem("profes"))["profesGuia"][0]
+   // profes = JSON.parse(localStorage.getItem("guias"))
+  }else{
+    profes = JSON.parse(localStorage.getItem("profes"))["profes"]
+    console.log(profes)
+    console.log("no guias")
+    //profes = JSON.parse(localStorage.getItem("profes"))
+   // profes = JSON.parse(localStorage.getItem("profes"))
+  }
+ 
+ // console.log(profes)
   const navigate = useNavigate();
+  
     //var idLocal = localStorage.getItem("profe");
     var idLocal = 1;
-    var i = 0;
-    for(var i; i<profes.length; i++){
-        if(profes[i]["id"] == idLocal){
-          break;
-        }
-    }
+    var i = localStorage.getItem("profe");
+  //console.log(i)
     var variableJSON = localStorage.getItem("usuario");
     var variable = JSON.parse(variableJSON);
-   
-    var nombre = profes[i]["nombre"] + " " + profes[i]["segNombre"] + " " + profes[i]["primerAp"] + " " + profes[i]["segAp"]
+
+    var nombre = profes[i]["nombre"] 
     var correo = profes[i]["correo"];
-    var oficina = profes[i]["telOficina"];
-    var cel = profes[i]["cel"];
-    var enEquipo = profes[i]["equipo"];
+    var oficina = profes[i]["telefono"];
+    var cel = profes[i]["celular"];
+    var enEquipo = profes[i]["guia"]
+    if(enEquipo == null){
+      enEquipo = 0;
+    }
+    
     var codigo = ""
-    var esCoordinador = profes[i]["coordinador"];
+    var esCoordinador = 0
     if(enEquipo == 1){
       codigo = "Codigo: " + profes[i]["sede"] + "-" + profes[i]["codigo"];
    }

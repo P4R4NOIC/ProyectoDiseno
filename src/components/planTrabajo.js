@@ -54,16 +54,17 @@ export const PlanTrabajo = () => {
 
   const handleClick = async (rowData) => {
     
-    //const listaActividades = await pedirListaActividades(rowData.id);
-
-    //localStorage.setItem("listaActividades", JSON.stringify(listaActividades));
-    //console.log(listaActividades);
+    
+    const listaActividades = await pedirListaActividades(rowData.idPlan);
+    
+    localStorage.setItem("listaActividades", JSON.stringify(listaActividades));
+    console.log(listaActividades);
     navigate('/cronoActividad');
   };
 
   const pedirListaActividades = async (idPlan) => {
     try {
-      const response = await fetch(`http://18.222.222.154:5000/profes/detalle`, {
+      const response = await fetch(`http://18.222.222.154:5000/planes/actividades/${idPlan}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -76,21 +77,7 @@ export const PlanTrabajo = () => {
 
       const data = await response.json(); // Parsear la respuesta a formato JSON
 
-      // Procesar los datos y establecer el estado
-      const datosParseados = data.map(arregloInterior => {
-        return arregloInterior.map(objeto => {
-          return {
-            id: objeto.idEquipo, 
-            nombreCompleto: objeto.nombreCompleto, 
-            correo: objeto.correo,
-            numOficina: objeto.telefono, 
-            numCel: objeto.celular,
-            codigoSede: objeto.codigoSede
-          };
-        });
-      });
-      console.log(datosParseados);
-      return datosParseados;
+      return data;
 
     } catch (error){
       console.error('Error al obtener los datos:', error.message);

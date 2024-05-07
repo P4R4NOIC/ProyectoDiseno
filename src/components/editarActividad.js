@@ -7,43 +7,43 @@ export const EditarActividad = () => {
   
 
   const [formData, setFormData] = useState({
-        id: '',
-        semana: '',
-        tipoActividad: '',
-        nombreActividad: '',
-        fechaActividad: '',
-        horaActividad: '',
-        fechaPublicacion: '',
-        diasPrevios: '',
-        profesSeleccionados: [],
-        afiche: '',
-        tipoAsistencia: '',
-        enlaceReunion: '',
-        recordatorios: [],
-        fotosRealizada: [],
-        estadoActividad: '',
-        observacion: '',
-        fechaCancelacion: '',
+    valoresGenerales: {
+      idActividad: "",
+      nombre: "",
+      semana: "",
+      direccion: "",
+      tipo: "",
+      modalidad: "",
+      fechaPublicacion: "",
+      fechaRealizacion: "",
+      afiche: "",
+      estado: "",
+      fechaRecordatorio: [],
+      responsables: [],
+    },
+    fotos: [],
+    descripcionCancelacion: "",
   });
 
   useEffect(() => {
-    if (formData.estadoActividad === 'Planeada' || formData.estadoActividad === 'Notificada') {
+    if (formData.valoresGenerales.estado === 'Planeada' || formData.valoresGenerales.estado === 'Notificada') {
       setFormData(prevState => ({
         ...prevState,
         fechaCancelacion: '',
-        fotosRealizada: [],
-        observacion: '',
+        fotos: [],
+        descripcionCancelacion: '',
       }));
     }
   
-    if (formData.estadoActividad === 'Realizada') {
+    if (formData.valoresGenerales.estado === 'Realizada') {
       setFormData(prevState => ({
         ...prevState,
         fechaCancelacion: '',
+        descripcionCancelacion: '',
       }));
     }
   
-    if (formData.estadoActividad === 'Cancelada') {
+    if (formData.valoresGenerales.estado === 'Cancelada') {
       const fechaActual = new Date();
       const año = fechaActual.getFullYear();
       const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
@@ -53,14 +53,14 @@ export const EditarActividad = () => {
       setFormData(prevState => ({
         ...prevState,
         fechaCancelacion: fechaFormateada,
-        fotosRealizada: [],
+        fotos: [],
       }));
     }
-  }, [formData.estadoActividad]); // Se ejecuta cada vez que formData.estadoActividad cambia
+  }, [formData.valoresGenerales.estado]); 
   
 
   useEffect(() => {
-    const storedData = localStorage.getItem('datosFormulario');
+    const storedData = localStorage.getItem('actividadActual');
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       setFormData(parsedData);
@@ -71,14 +71,32 @@ export const EditarActividad = () => {
     const { name, value } = e.target;
     setFormData(prevState => ({
       ...prevState,
-      [name]: value,
+      valoresGenerales: {
+        ...prevState.valoresGenerales,
+        [name]: value,
+      }
+    }));
+  };
+
+  const handleChangeObservacion = (e) => {
+    const value = e.target.value;
+    setFormData(prevState => ({
+      ...prevState,
+      descripcionCancelacion: value
     }));
   };
 
   const handleChangeProfes = (selectedOptions) => {
+    const selectedResponsables = selectedOptions.map(option => ({
+      correo: option.correo,
+      nombre: option.nombre
+    }));
     setFormData(prevState => ({
       ...prevState,
-      profesSeleccionados: selectedOptions, // Almacena las opciones seleccionadas en un array
+      valoresGenerales: {
+        ...prevState.valoresGenerales,
+        responsables: selectedResponsables,
+      }
     }));
   };
   
@@ -88,12 +106,32 @@ export const EditarActividad = () => {
     opcionesSemanas.push(<option key={i} value={`Semana${i}`}>Semana {i}</option>);
   }
 
-  const opcionesProfes = [];
-  for (let i = 1; i <= 10; i++) {
-    opcionesProfes.push(<option key={i} value={`Profe ${i}`}>Profe {i}</option>);
-  }
+  const [opcionesProfes, setOpcionesProfes] = useState([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`http://18.222.222.154:5000/profes/detalle`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error('Error al obtener los datos del detalle de equipo');
+        }
+        const data = await response.json();
+        setOpcionesProfes(data);
+    
+      } catch (error){
+        console.error('Error al obtener los datos:', error.message);
+        setOpcionesProfes([]); // Asigna un array vacío en caso de error
+      }
+    };
 
+    fetchData(); // Llamada a la función para obtener los datos al montar el componente
+  }, []);
 
   // Estado para almacenar las fechas de recordatorios
   const [nuevaFecha, setNuevaFecha] = useState('');
@@ -101,38 +139,39 @@ export const EditarActividad = () => {
   // Función para añadir una nueva fecha de recordatorio
   const agregarFechaRecordatorio = (event) => {
     event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
-  
+
     // Verificar si la nueva fecha no está vacía
     if (nuevaFecha.trim() !== '') {
       setFormData(prevState => {
         // Verificar si la nueva fecha ya existe en la lista de recordatorios
-        if (!prevState.recordatorios.includes(nuevaFecha)) {
+        const fechaExistente = prevState.valoresGenerales.fechaRecordatorio.find(fecha => fecha.fechaR === nuevaFecha);
+        if (!fechaExistente) {
           // Si la fecha no está repetida, agregarla a la lista de recordatorios en el estado formData
           return {
             ...prevState,
-            recordatorios: [...prevState.recordatorios, nuevaFecha]
+            valoresGenerales: {
+              ...prevState.valoresGenerales,
+              fechaRecordatorio: [...prevState.valoresGenerales.fechaRecordatorio, { idFecRec: prevState.valoresGenerales.fechaRecordatorio.length + 1, idActividad: prevState.valoresGenerales.idActividad, fechaR: nuevaFecha }]
+            }
           };
         }
         // Si la fecha ya existe, retornar el estado actual sin modificar
         return prevState;
       });
-  
+
       // Reiniciar el campo de fecha después de agregarla
       setNuevaFecha('');
     }
   };
-  
 
   // Función para eliminar una fecha de recordatorio
-  const eliminarFechaRecordatorio = (index, event) => {
-    event.preventDefault();
-    const nuevasFechas = [...formData.recordatorios];
-    nuevasFechas.splice(index, 1);
-
-    // Actualizar el estado formData.recordatorios
+  const eliminarFechaRecordatorio = (idFecRec) => {
     setFormData(prevState => ({
-        ...prevState,
-        recordatorios: nuevasFechas
+      ...prevState,
+      valoresGenerales: {
+        ...prevState.valoresGenerales,
+        fechaRecordatorio: prevState.valoresGenerales.fechaRecordatorio.filter(fecha => fecha.idFecRec !== idFecRec)
+      }
     }));
   };
 
@@ -145,7 +184,10 @@ export const EditarActividad = () => {
       const base64String = event.target.result;
       setFormData(prevState => ({
         ...prevState,
-        afiche: base64String,
+        valoresGenerales: {
+          ...prevState.valoresGenerales,
+          afiche: base64String,
+        }
       }));
     };
   
@@ -163,7 +205,7 @@ export const EditarActividad = () => {
         nuevasImagenes.push(base64String);
         setFormData(prevState => ({
           ...prevState,
-          fotosRealizada: nuevasImagenes,
+          fotos: nuevasImagenes,
         }));
       };
       reader.readAsDataURL(archivo);
@@ -188,74 +230,74 @@ export const EditarActividad = () => {
 
   
   async function validarDatos() {
-      if (formData.semana === "nulo"){
+      if (formData.valoresGenerales.semana === "nulo"){
         throw new Error('La semana no puede ser nula');
       };
-      if (formData.tipoActividad === "nulo"){
+      if (formData.valoresGenerales.tipo === "nulo"){
         throw new Error('El tipo de actividad no puede ser nula');
       };
-      if (formData.nombreActividad === ''){
+      if (formData.valoresGenerales.nombre === ''){
         throw new Error('El nombre de actividad no puede ser vacío');
       };
-      if (formData.fechaActividad === ''){
+      if (formData.valoresGenerales.fechaRealizacion === ''){
         throw new Error('La fecha de actividad no puede ser nula');
       };
-      if (formData.horaActividad === ''){
-        throw new Error('La hora de la actividad no puede ser nula');
-      };
-      if (formData.fechaPublicacion === ''){
+      if (formData.valoresGenerales.fechaPublicacion === ''){
         throw new Error('La fecha de publicación no puede ser nula');
       };
 
-      const fechaRealizacionDate = new Date(formData.fechaActividad);
-      const fechaPublicacionDate = new Date(formData.fechaPublicacion);
+      // Convertir fechaActividad a un objeto Date
+      const fechaRealizacionDate = new Date(formData.valoresGenerales.fechaRealizacion);
+
+
+      const fechaPublicacionDate = new Date(formData.valoresGenerales.fechaPublicacion);
       if (fechaRealizacionDate < fechaPublicacionDate) {
         throw new Error('La fecha de publicación no puede ser posterior a la fecha de la actividad.');
       }
 
-      if (formData.diasPrevios === ''){
-        throw new Error('Los días previos no pueden ser vacíos');
-      };
-      if (formData.profesSeleccionados.length == 0){
+      if (formData.valoresGenerales.responsables.length == 0){
         throw new Error('Debe de seleccionar al menos a un profesor');
       };
-      if (formData.afiche === ''){
+      if (formData.valoresGenerales.afiche === ''){
         throw new Error('Tiene que agregar un afiche');
       };
-      if (formData.tipoAsistencia == 'nulo'){
+      if (formData.valoresGenerales.modalidad == 'nulo'){
         throw new Error('El tipo de asistencia no puede ser nulo');
       };
-      if (formData.tipoAsistencia === 'Remota' && formData.enlaceReunion === ''){
+      if (formData.valoresGenerales.modalidad === 'Remota' && formData.valoresGenerales.direccion === ''){
         throw new Error('Debe de ingresar el enlace de reunión');
       };
+      if (formData.valoresGenerales.modalidad === 'Presencial' && formData.valoresGenerales.direccion === ''){
+        throw new Error('Debe de ingresar una direccion');
+      };
 
-      for (const fechaRecordatorio of formData.recordatorios) {
+      for (const fechaRecordatorio of formData.valoresGenerales.fechaRecordatorio) {
         const fechaRecordatorioDate = new Date(fechaRecordatorio);
         if (fechaRecordatorioDate > fechaRealizacionDate || fechaRecordatorioDate < fechaPublicacionDate) {
           throw new Error('Las fechas de recordatorio deben estar dentro del rango entre la fecha de realización y la fecha de publicación.');
         }
       }
 
-      if (formData.estadoActividad === 'nulo'){
+      if (formData.valoresGenerales.estado === 'nulo'){
         throw new Error('Debe de seleccionar un estado para la actividad');
       };
       
-      if (formData.estadoActividad === 'Realizada'){
-        if (formData.tipoAsistencia === 'Presencial'){
-          if (formData.fotosRealizada.length == 0){
+      if (formData.valoresGenerales.estado === 'Realizada'){
+        if (formData.valoresGenerales.modalidad === 'Presencial'){
+          if (formData.fotos.length == 0){
             throw new Error('Tiene que agregar evidencia en forma de una o varias fotos');
           };
         };
 
-        if (formData.tipoAsistencia === 'Remota'){
-          if (formData.fotosRealizada.length == 0 && formData.observacion === ''){
+        if (formData.valoresGenerales.modalidad === 'Remota'){
+          if (formData.fotos.length == 0 && formData.descripcionCancelacion === ''){
             throw new Error('Tiene que agregar evidencia en forma de una o varias fotos, o agregar el enlace para acceder a la grabación');
           };
         };
       };
 
-      if (formData.estadoActividad === 'Cancelada'){
-        if (formData.observacion === ''){
+      if (formData.valoresGenerales.estado === 'Cancelada'){
+        if (formData.descripcionCancelacion === ''){
           throw new Error('Tiene que agregar una observación');
         };
       };
@@ -277,7 +319,7 @@ export const EditarActividad = () => {
       console.error('Error al subir datos:', error.message);
     }
   }
-
+  console.log(formData);
   return (
     <div>
       
@@ -288,7 +330,7 @@ export const EditarActividad = () => {
               <label className = "textoGenera">Seleccionar semana:</label>
               
               <div>
-                <select className="form-control entrada" name='semana' value={formData.semana} onChange={handleChange}>
+                <select className="form-control entrada" name='semana' value={formData.valoresGenerales.semana} onChange={handleChange}>
                 
                   <option value={"nulo"}>Seleccionar Semana</option>
                   {opcionesSemanas}
@@ -297,7 +339,7 @@ export const EditarActividad = () => {
 
               <label className = "textoGenera">Seleccionar tipo de actividad:</label> 
               <div>
-                <select className="form-control entrada" name='tipoActividad' value={formData.tipoActividad} onChange={handleChange}>
+                <select className="form-control entrada" name='tipo' value={formData.valoresGenerales.tipo} onChange={handleChange}>
                   <option value={"nulo"}>Seleccionar Actividad</option>
                   <option value={"Orientadoras"}>Orientadoras</option>
                   <option value={"Motivacionales"}>Motivacionales</option>
@@ -308,64 +350,80 @@ export const EditarActividad = () => {
               </div>
               
               <label className = "textoGenera">Escribir nombre de actividad:</label>
-              <input type="text" className="form-control entrada" name='nombreActividad' value={formData.nombreActividad} onChange={handleChange}></input>
+              <input type="text" className="form-control entrada" name='nombre' value={formData.valoresGenerales.nombre} onChange={handleChange}></input>
               <label className = "textoGenera">Fecha de actividad:</label>
-              <input type="date" className="form-control entrada" name='fechaActividad' value={formData.fechaActividad} onChange={handleChange}></input>
-              <label className = "textoGenera">Hora de actividad:</label>
-              <input type="time" className="form-control entrada" name='horaActividad' value={formData.horaActividad} onChange={handleChange}></input>
+              <input type="datetime-local" className="form-control entrada" name='fechaRealizacion' value={formData.valoresGenerales.fechaRealizacion} onChange={handleChange}></input>
               <label className = "textoGenera">Fecha de publicación:</label>
-              <input type="date" className="form-control entrada" name='fechaPublicacion' value={formData.fechaPublicacion} onChange={handleChange}></input>
-              <label className = "textoGenera">Días previos para anunciar actividad:</label>
-              <input type="number" className="form-control entrada" name='diasPrevios' value={formData.diasPrevios} onChange={handleChange} min={0}></input>
+              <input type="date" className="form-control entrada" name='fechaPublicacion' value={formData.valoresGenerales.fechaPublicacion} onChange={handleChange}></input>
 
               <label className = "textoGenera">Seleccione los profesores encargados utilizando CTRL click:</label>
               <div>
+              {opcionesProfes.length > 0 && (
                 <select
-                className="form-control entrada"
-                multiple
-                value={formData.profesSeleccionados}
-                onChange={(e) => handleChangeProfes(Array.from(e.target.selectedOptions, (option) => option.value))}
+                  className="form-control entrada"
+                  multiple
+                  value={formData.valoresGenerales.responsables.map(responsable => responsable.correo)}
+                  onChange={(e) => {
+                    const selectedOptions = Array.from(e.target.selectedOptions, option => {
+                      return opcionesProfes[0].find(responsable => responsable.correo === option.value);
+                    });
+                    handleChangeProfes(selectedOptions);
+                  }}
                 >
-                {opcionesProfes}
+                  {opcionesProfes[0].map(responsable => (
+                    <option key={responsable.correo} value={responsable.correo}>
+                      {responsable.nombre}
+                    </option>
+                  ))}
                 </select>
+              )}
+
 
               </div>
               
               <label className = "textoGenera">Afiche:</label>
               <input type="file" id="foto" name="afiche" accept="image/*" className='form-control entrada' onChange={handleChangeAfiche}></input>
-              {formData.afiche && (
-                <img src={formData.afiche} alt="Afiche seleccionado" style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
+              {formData.valoresGenerales.afiche && (
+                <img src={formData.valoresGenerales.afiche} alt={formData.valoresGenerales.afiche} style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
               )}
 
               
               <div>
               <label className ="textoGenera">Tipo de asistencia:</label> 
-                <select className="form-control entrada" name='tipoAsistencia' value={formData.tipoAsistencia} onChange={handleChange}>
+                <select className="form-control entrada" name='modalidad' value={formData.valoresGenerales.modalidad} onChange={handleChange}>
                   <option value={"nulo"}>Seleccionar tipo de asistencia</option>
                   <option value={"Presencial"}>Presencial</option>
                   <option value={"Remota"}>Remota</option>
                 </select>
-                {formData.tipoAsistencia === 'Remota' && (
+                
                   <div>
-                    <label className ="textoGenera">Escribe el enlace:</label>
-                    <input type="text" id="tipoAsistencia" name='enlaceReunion' value={formData.enlaceReunion} onChange={handleChange} placeholder='Ingresa el enlace' className="form-control entrada"/>
+                    {formData.valoresGenerales.modalidad === 'Presencial' && (
+                      <label className ="textoGenera">Escriba la ubicación:</label>
+                    )}
+                    {formData.valoresGenerales.modalidad === 'Remota' && (
+                      <label className ="textoGenera">Escribe el enlace:</label>
+                    )}
+                    {(formData.valoresGenerales.modalidad === 'Remota' || formData.valoresGenerales.modalidad === 'Presencial') && (
+                      <input type="text" id="tipoAsistencia" name='direccion' value={formData.valoresGenerales.direccion} onChange={handleChange} placeholder='Ingresa el enlace' className="form-control entrada"/>
+                    )}
+                    
                   </div>
-                )}
+                
               </div>
 
               <div>
                 <label className ="textoGenera">¿Agregar recordatorios?:</label>
                 <input type="date" value={nuevaFecha} onChange={(event) => setNuevaFecha(event.target.value)}/>
-                {/* Botón para agregar una nueva fecha de recordatorio */}
+                
                 <button onClick={agregarFechaRecordatorio}>Agregar Fecha de Recordatorio</button>
 
-                {/* Lista de fechas de recordatorios */}
+                
                 <ul>
-                  {formData.recordatorios.map((fecha, index) => (
+                  {formData.valoresGenerales.fechaRecordatorio.map((fecha, index) => (
                     <li key={index}>
-                      {fecha}
-                      {/* Botón para eliminar la fecha de recordatorio */}
-                      <button onClick={(event) => eliminarFechaRecordatorio(index, event)}>Eliminar</button>
+                      {fecha.fechaR}
+                      {/* Cambiar el tipo de botón de "submit" a "button" */}
+                      <button type="button" onClick={() => eliminarFechaRecordatorio(fecha.idFecRec)}>Eliminar</button>
                     </li>
                   ))}
                 </ul>
@@ -373,35 +431,29 @@ export const EditarActividad = () => {
 
               <label className = "textoGenera">Seleccionar estado de actividad:</label> 
               <div>
-                <select className="form-control entrada" name='estadoActividad' value={formData.estadoActividad} onChange={handleChange}>
+                <select className="form-control entrada" name='estado' value={formData.valoresGenerales.estado} onChange={handleChange}>
                   <option value={"nulo"}>Seleccionar estado</option>
                   <option value={"Planeada"}>Planeada</option>
                   <option value={"Notificada"}>Notificada</option>
                   <option value={"Realizada"}>Realizada</option>
                   <option value={"Cancelada"}>Cancelada</option>
                 </select>
-                {formData.estadoActividad === 'Realizada' && (
+                {formData.valoresGenerales.estado === 'Realizada' && (
                   <div>
                     {/* Input para subir imágenes */}
                     <input type="file" accept="image/*" multiple onChange={handleChangeImagenesActividad} />
                     {/* Mostrar las imágenes seleccionadas */}
                     <div>
-                    {formData.fotosRealizada.map((imagen, index) => (
+                    {formData.fotos.map((imagen, index) => (
                       <img key={index} src={imagen} alt={`Imagen ${index}`} style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }} />
                     ))}
                     </div>
                   </div>
                 )}
-                {formData.tipoAsistencia === 'Remota' && formData.estadoActividad === 'Realizada' && (
-                  <div>
-                    <label className ="textoGenera">Ingrese enlace de la reunion:</label>
-                    <input type="text" name='observacion' value={formData.observacion} onChange={handleChange} placeholder='Ingresar enlace' className="form-control entrada"/>
-                  </div>
-                )}
-                {formData.estadoActividad === 'Cancelada' && (
+                {formData.valoresGenerales.estado === 'Cancelada' && (
                   <div>
                     <label className ="textoGenera">Ingrese observación:</label>
-                    <input type="text" name='observacion' value={formData.observacion} onChange={handleChange} placeholder='Ej: Hubo lluvia' className="form-control entrada"/>
+                    <input type="text" name='descripcionCancelacion' value={formData.descripcionCancelacion} onChange={handleChangeObservacion} placeholder='Ej: Hubo lluvia' className="form-control entrada"/>
                   </div>
                 )}
               </div>

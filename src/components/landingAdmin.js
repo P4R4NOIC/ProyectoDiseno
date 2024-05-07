@@ -9,7 +9,7 @@ import * as XLSX from 'xlsx';
 export const LandingAdmin = () => {
 
   var archivosLista = ["estudiantes.xlsx", "est2024.xlsx","est2025.xlsx"]
-
+  var profesJSON = {profes:[], guias:[]}
   const [archivoSeleccionado, setArchivoSeleccionado] = useState("nulo");
   const opcionesArchivos = [];
   for (var i = 0; i < archivosLista.length; i++) {
@@ -23,34 +23,11 @@ export const LandingAdmin = () => {
 
     const navigate = useNavigate();
     localStorage.setItem("coordinador", 0);
+  
     var variable= localStorage.getItem("usuario");
-    var profes = [{nombre: "Francisco", segNombre:"Jose", primerAp:"Torres", segAp:"Rojas", sede:"SJ", id:1, 
-                      correo:"torresrojas@itcr.ac.cr", telOficina: 12345678, cel: 90123456, codigo: 123, equipo:1, coordinador: 1}, 
-                      {nombre: "Adriana", segNombre:"", primerAp:"Alvarez", segAp:"Figueroa", sede:"SJ", id:2, 
-                      correo:"aalvarez@itcr.ac.cr", telOficina: 21212121, cel: 90909090, codigo: 456, equipo:0, coordinador: 0}]
-    function creaProfesGuia(){
-      for(var i = 0; i<profes.length; i++){
-        if(profes[i]["coordinador"] === 1){
-          localStorage.setItem("coordinador", 1);
-        }
-        if(profes[i]["equipo"] === 1){
-          var div = document.createElement("div");
-          var a = document.createElement("a");
-          div.classList = "textoCaja";
-          a.classList = "profes";
-          a.id = profes[i]["id"]
-          a.textContent = profes[i]["nombre"] + " " + profes[i]["segNombre"] + " " + profes[i]["primerAp"] + " " + profes[i]["segAp"]
-          a.onclick = function(){
-            localStorage.setItem("profe", this.id);
-            navigate('/infoProfe');
-          }
-          
-          div.appendChild(a)
-          document.getElementById("colGuia").appendChild(div);
-        }
-        
-      }
-    }
+    var profes = []
+
+   
     var excelActual;
 const getExcel = async () => {
   try {
@@ -70,7 +47,7 @@ const getExcel = async () => {
 
         // Convertir la respuesta a formato JSON
         const data = await response.json();
-       console.log(data)
+      localStorage.setItem("estudiantes", JSON.stringify(data))
         return data;
         
       
@@ -78,6 +55,38 @@ const getExcel = async () => {
     throw new Error(error.message);
   }
 }
+const getProfes = async () =>{
+  try {
+   
+    const response = await fetch(`http://18.222.222.154:5000/profes/detalleF/1`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Verificar si la respuesta es exitosa
+    if (!response.ok) {
+      // Si la respuesta no es exitosa, lanzar un error
+      throw new Error('Error al obtener los datos del usuario');
+    }
+
+    // Convertir la respuesta a formato JSON
+    const data = await response.json();
+   //console.log(data)
+  
+   //console.log(enviar)
+   
+   localStorage.setItem("profes",JSON.stringify(data));
+   
+    return data;
+    
+  
+} catch (error){
+throw new Error(error.message);
+}
+}
+
    async function creaEstudiantes(){
       const excelActual = await getExcel();
       for(var i = 0; i < excelActual.length;i++){
@@ -90,34 +99,64 @@ const getExcel = async () => {
       
     }
 
-
-    function creaProfes(){
-      for(var i = 0; i<profes.length; i++){
-        if(profes[i]["equipo"] === 0){
+  async function creaProfes(){
+    const profes = await getProfes();
+   // console.log(profes["profes"])
+    
+      for(var i = 0; i<profes["profes"].length; i++){
+       
           var div = document.createElement("div");
           var a = document.createElement("a");
           div.classList = "textoCaja";
           a.classList = "profes";
-          a.id = profes[i]["id"]
-          a.textContent = profes[i]["nombre"] + " " + profes[i]["segNombre"] + " " + profes[i]["primerAp"] + " " + profes[i]["segAp"]
+          a.id = i
+          a.textContent = profes["profes"][i]["nombre"]
+          a.setAttribute("index", i);
           a.onclick = function(){
             localStorage.setItem("profe", this.id);
+            localStorage.setItem("desplegarGuias",0);
             navigate('/infoProfe');
-          }
           
+          }
           div.appendChild(a)
           document.getElementById("colProfes").appendChild(div);
         }
        
-      }
+      
     }
+    async function creaProfesGuia(){
+      const profes = await getProfes();
+      //console.log(profes[0])
+        for(var i = 0; i<profes["profesGuia"][0].length; i++){
+         
+         
+            var div = document.createElement("div");
+            var a = document.createElement("a");
+            div.classList = "textoCaja";
+            a.classList = "profes";
+          
+            a.textContent = profes["profesGuia"][0][i]["nombre"] 
+            a.id = i
+            a.onclick = function(){
+              localStorage.setItem("profe", this.id);
+              localStorage.setItem("desplegarGuias",1);
+              navigate('/infoProfe');
+            }
+            
+            div.appendChild(a)
+            document.getElementById("colGuia").appendChild(div);
+          
+          
+        }
+      }
     useEffect(()=>{
      // var fs = require('fs');
       //var files = fs.readdirSync('/public');
         creaProfesGuia();
         creaProfes();
         creaEstudiantes();
-    
+        localStorage.setItem("listas", JSON.stringify(profesJSON))
+     // console.log(profesJSON)
       }, [])
   return (
     <div>
@@ -181,13 +220,7 @@ const getExcel = async () => {
 
 
 <button className="button boton btn-submit" type="button" onClick={()=>navigate('/login')}>Volver</button>
-            <div class = "archivos">
-                <select className="form-control entrada" value={archivoSeleccionado} onChange={cambiarArchivo}>
-                
-                  <option value={"nulo"}>Seleccionar Archivo</option>
-                  {opcionesArchivos}
-                </select>
-              </div>
+           
 
 
     </div>

@@ -43,7 +43,7 @@ export const DetalleEquipo = () => {
           return arregloInterior.map(objeto => {
             return {
               id: objeto.idEquipo, 
-              nombreCompleto: objeto.nombreCompleto, 
+              nombreCompleto: objeto.nombre, 
               correo: objeto.correo,
               numOficina: objeto.telefono, 
               numCel: objeto.celular,

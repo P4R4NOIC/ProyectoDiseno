@@ -21,6 +21,7 @@ import { EditarActividad } from './components/editarActividad';
 import { PlanTrabajo } from './components/planTrabajo';
 import { CreaPlanTrabajo } from './components/creaPlanTrabajo';
 
+
 function App() {
   return (
   
@@ -45,7 +46,7 @@ function App() {
             <Route path="/editarActividad" element = {<EditarActividad/>} />
             <Route path="/planTrabajo" element = {<PlanTrabajo/>} />
             <Route path="/creaPlanTrabajo" element = {<CreaPlanTrabajo/>} />
-          
+        
           </Routes>
         </Router>
       
