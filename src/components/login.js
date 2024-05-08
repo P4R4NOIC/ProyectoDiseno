@@ -18,7 +18,7 @@ async function validaCorreo(){
   }
 
   const sesionUsuario = await obtenerSesionUsuario(email, contrasena);
-  
+ 
   const usuario = await autenticarUsuario(email, contrasena, sesionUsuario);
   
   await localStorage.setItem('usuario', JSON.stringify(usuario));
@@ -46,21 +46,22 @@ const obtenerSesionUsuario = async (email, contrasena) =>{
   var correoAdminALValido = /^[\w-\.]+@(adminAL.ac.cr)$/;
   var correoAdminSCValido = /^[\w-\.]+@(adminSC.ac.cr)$/;
   var correoProfesorValido = /^[a-zA-Z0-9_-]+(@itcr.ac.cr)$/;
+  
 
   if (correoAdminCAValido.test(email) && contrasena !== ""){
-    return "ADMINCA";
+    return 5;
   } 
   if (correoAdminSJValido.test(email) && contrasena !== ""){
-    return "ADMINSJ";
+    return 1;
   }
   if (correoAdminLIValido.test(email) && contrasena !== ""){
-    return "ADMINLI";
+    return 2;
   }
   if (correoAdminALValido.test(email) && contrasena !== ""){
-    return "ADMINAL";
+    return 4;
   }
   if (correoAdminSCValido.test(email) && contrasena !== ""){
-    return "ADMINSC";
+    return 3;
   }
   if(correoProfesorValido.test(email) && contrasena !== ""){
     return "PROFESOR";
@@ -71,6 +72,7 @@ const obtenerSesionUsuario = async (email, contrasena) =>{
 
 const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
   try {
+   
       if(sesionUsuario === 'PROFESOR'){
         const response = await fetch(`http://18.222.222.154:5000/profes/guia/${email}`, {
           method: 'GET',
@@ -96,7 +98,32 @@ const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
         } 
         return data;
         
-      }else{
+      }else if(sesionUsuario>0){
+        const response = await fetch(`http://18.222.222.154:5000/asistentes/getAsistente/${email}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // Verificar si la respuesta es exitosa
+        if (!response.ok) {
+          // Si la respuesta no es exitosa, lanzar un error
+          throw new Error('Error al obtener los datos del usuario');
+        }
+
+        // Convertir la respuesta a formato JSON
+        const data = await response.json();
+        // Devolver los datos del usuario
+        console.log(data)
+        if(contrasena === data.contra){
+          localStorage.setItem("conexionEsp", sesionUsuario);
+          return data;
+        } else{
+          throw new Error('Tokens no validos');
+        }
+      }
+      else{
         const response = await fetch(`http://18.222.222.154:5000/profes/guia/${email}`, {
           method: 'GET',
           headers: {
@@ -113,6 +140,7 @@ const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
         // Convertir la respuesta a formato JSON
         const data = await response.json();
         // Devolver los datos del usuario
+        console.log(data)
         if(contrasena === data.contraseña){
           return data;
         } else{

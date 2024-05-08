@@ -2,26 +2,72 @@ import React from 'react'
 import { useNavigate } from "react-router-dom";
 export const AgregaEstudiante = () => {
   const navigate = useNavigate();
-  var variable= localStorage.getItem("usuario");
+  var variable= JSON.parse(localStorage.getItem("usuario"))["correo"];
 
   function agregaEstudiante(){
     var carnet = document.getElementById("inputCarnet").value
+    if(carnet == "" || !carnet.trim().length){
+     
+      alert("Error: hay espacios importantes vacios");
+      return;
+    }
     var nombre = document.getElementById("inputNombre").value
+    if(nombre == "" || !nombre.trim().length){
+     
+      alert("Error: hay espacios importantes vacios");
+      return;
+    }
     var Seg = document.getElementById("inputSeg").value
     var apellido = document.getElementById("inputApellido").value
+    if(apellido == "" || !apellido.trim().length){
+     
+      alert("Error: hay espacios importantes vacios");
+      return;
+    }
+    var correoEstudianteValido = /^[a-zA-Z0-9_-]+(@estudiantec.cr)$/;
     var segAp = document.getElementById("inputSegAp").value
     var correo = document.getElementById("inputCorreo").value
+    if(correo == "" || !correo.trim().length){
+     
+      alert("Error: hay espacios importantes vacios");
+      return;
+    }
+    if(!correoEstudianteValido.test(correo)){
+      alert("Error: El formato del correo no es correcto");
+      return;
+    }
     var cel = document.getElementById("inputCel").value
-    var sede = document.getElementById("sedes").options[document.getElementById("sedes").selectedIndex].text
+    if(cel == "" || !cel.trim().length){
+     
+      alert("Error: hay espacios importantes vacios");
+      return;
+    }
+    var sede;
+    if( localStorage.getItem("conexionEsp") == 1){
+      sede = "SJ"
+    }
+    if( localStorage.getItem("conexionEsp") == 2){
+      sede = "LI"
+    }
+    if( localStorage.getItem("conexionEsp") == 3){
+      sede = "SC"
+    }
+    if( localStorage.getItem("conexionEsp") == 4){
+      sede = "AL"
+    }
+    if( localStorage.getItem("conexionEsp") == 5){
+      sede = "CA"
+    }
+    
 
-    var estudianteNuevo = {Carnet:carnet, Nombre:nombre, "Segundo Nombre":Seg, Apellido:apellido, "Segundo Apellido":segAp, Correo:correo, Cel:cel, Sede:sede}
+    var estudianteNuevo = {Apellido:apellido, Carnet:carnet,Cel:cel, Correo:correo,Nombre:nombre, Sede:sede,  "Segundo Apellido":segAp, "Segundo Nombre":Seg  }
     console.log(estudianteNuevo)
     var estudiantes = JSON.parse(localStorage.getItem("estudiantes"))
-    console.log(JSON.parse(localStorage.getItem("estudiantes")));
-    estudiantes.push(estudianteNuevo);
+    console.log(estudiantes);
+    estudiantes["excel"].push(estudianteNuevo);
     console.log(estudiantes);
 
-    var enviar = JSON.stringify(estudiantes)
+   /* var enviar = JSON.stringify(estudiantes)
       console.log(estudiantes)
       fetch('http://18.222.222.154:5000/excel/subir', {
         method: 'POST',
@@ -29,7 +75,7 @@ export const AgregaEstudiante = () => {
             'Content-Type': 'application/json'
         },
         body: enviar
-    })
+    })*/
      // console.log(excelActual)
       
     
@@ -51,15 +97,7 @@ export const AgregaEstudiante = () => {
           <input type="text" id="inputApellido" className="form-control entrada" placeholder="Apellido" required=""></input>
           <label class = "textoGenera">Segundo Apellido:</label>
           <input type="text" id="inputSegAp" className="form-control entrada" placeholder="Segundo Apellido" required=""></input>
-          <label className = "textoGenera">Sede:</label> 
-                <select className="form-control entrada" name='semestre' id = "sedes">
-                    <option value={1}>SJ</option>
-                    <option value={1}>SJ</option>
-                    <option value={2}>LI</option>
-                    <option value={3}>SC</option>
-                    <option value={4}>AL</option>
-                    <option value={5}>CA</option>
-                </select>
+         
           <label class = "textoGenera">Correo:</label>
           <input type="mail" id="inputCorreo" className="form-control entrada" placeholder="Correo" required=""></input>
           <label class = "textoGenera">Carnet:</label>

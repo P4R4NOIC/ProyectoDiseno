@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 
 export const SubirExcel = () => {
   const navigate = useNavigate();
-  var variable= localStorage.getItem("usuario");
+  var variable= JSON.parse(localStorage.getItem("usuario"))["correo"];
   const inputFileRef = useRef(null);
 
   var excelActual = {nombre:"",excel:""};
@@ -67,6 +67,7 @@ export const SubirExcel = () => {
      
       excelActual["nombre"] = file["name"]
       var enviar = JSON.stringify(excelActual)
+      localStorage.setItem("excelActual", excelActual);
       console.log(excelActual)
       fetch('http://18.222.222.154:5000/excel/subir', {
         method: 'POST',
@@ -79,7 +80,7 @@ export const SubirExcel = () => {
       
     };
     reader.readAsArrayBuffer(file);
-
+    
    
 
   }

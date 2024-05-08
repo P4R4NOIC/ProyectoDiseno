@@ -58,6 +58,7 @@ export const PlanTrabajo = () => {
     const listaActividades = await pedirListaActividades(rowData.idPlan);
     
     localStorage.setItem("listaActividades", JSON.stringify(listaActividades));
+    localStorage.setItem("idPlanActual", rowData.idPlan);
     console.log(listaActividades);
     navigate('/cronoActividad');
   };

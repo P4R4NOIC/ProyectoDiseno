@@ -3,7 +3,7 @@ import "../estilosGenerales.css";
 import { useNavigate } from "react-router-dom";
 export const CreaProfe = () => {
   
-  var variable= localStorage.getItem("usuario");
+  var variable= JSON.parse(localStorage.getItem("usuario"))["correo"];
   const navigate = useNavigate();
   var profes = JSON.parse(localStorage.getItem("profes"))
   console.log(profes)
@@ -11,21 +11,64 @@ export const CreaProfe = () => {
 
   function crearProfe(){
     var nombre = document.getElementById("inputNombre").value
+    if(nombre == "" || !nombre.trim().length){
+     
+      alert("Error: hay espacios importantes vacios");
+      return;
+    }
     var SegundoNombre = document.getElementById("inputseg").value
+ 
     var apellido = document.getElementById("inputapellido").value
+    if(apellido == "" || !apellido.trim().length){
+     
+      alert("Error: hay espacios importantes vacios");
+      return;
+    }
     var segapellido = document.getElementById("inputsegapellido").value
     var oficina = document.getElementById("inputOFI").value
+    if(oficina == "" || !oficina.trim().length){
+     
+      alert("Error: hay espacios importantes vacios");
+      return;
+    }
+    var correoProfesorValido = /^[a-zA-Z0-9_-]+(@itcr.ac.cr)$/;
     var activo = 1;
     var celular = document.getElementById("inputCel").value
-    var sede = document.getElementById("sedes").value
-    console.log(document.getElementById("sedes").options[document.getElementById("sedes").selectedIndex].text)
+    if(celular == "" || !celular.trim().length){
+     
+      alert("Error: hay espacios importantes vacios");
+      return;
+    }
+    var sede = localStorage.getItem("conexionEsp")
+   
     var correo = document.getElementById("inputCorreo").value
+    if(correo == "" || !correo.trim().length){
+     
+      alert("Error: hay espacios importantes vacios");
+      return;
+    }
+    if(!correoProfesorValido.test(correo)){
+      alert("Error: El formato del correo no es correcto");
+      return;
+    }
     var foto = null
     var guia = null;
     var coordinador = null;
     var completo = nombre + " " + SegundoNombre + " " + apellido + " " + segapellido
     var nuevoProfe = {activo:activo,celular:celular, coordinador:coordinador, correo:correo, foto:foto,guia:guia,idSede:sede, nombre:completo, telefono:oficina}
     console.log(nuevoProfe)
+
+    var enviar = JSON.stringify(nuevoProfe)
+    fetch('http://18.222.222.154:5000/profes/add/profesor' , {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+      body: enviar
+    })
+
+
+
   }
 
   return (
@@ -47,16 +90,7 @@ export const CreaProfe = () => {
               <label class = "textoGenera">Correo:</label>
               <input type="mail" id="inputCorreo" className="form-control entrada" placeholder="Correo" required=""></input>
           
-              <label className = "textoGenera">Sede:</label> 
-                <select className="form-control entrada" name='semestre' id = "sedes">
-                    <option value={1}>Seleccionar Sede</option>
-                    <option value={1}>SJ</option>
-                    <option value={2}>LI</option>
-                    <option value={3}>SC</option>
-                    <option value={4}>AL</option>
-                    <option value={5}>CA</option>
-                </select>
-        
+              
               <label class = "textoGenera">Numero de Telefono Oficina:</label>
               <input type="number" id="inputOFI" className="form-control entrada" placeholder="Numero de Telefono Oficina" required=""></input>
               <label class = "textoGenera">Numero de Telefono Celular:</label>

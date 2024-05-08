@@ -38,21 +38,8 @@ export const DetalleEquipo = () => {
 
         const data = await response.json(); // Parsear la respuesta a formato JSON
 
-        // Procesar los datos y establecer el estado
-        const datosParseados = data.map(arregloInterior => {
-          return arregloInterior.map(objeto => {
-            return {
-              id: objeto.idEquipo, 
-              nombreCompleto: objeto.nombre, 
-              correo: objeto.correo,
-              numOficina: objeto.telefono, 
-              numCel: objeto.celular,
-              codigoSede: objeto.codigoSede
-            };
-          });
-        });
-        console.log(datosParseados);
-        setDatos(datosParseados); // Establecer los datos en el estado
+        
+        setDatos(data); // Establecer los datos en el estado
 
       } catch (error){
         console.error('Error al obtener los datos:', error.message);
@@ -95,30 +82,34 @@ export const DetalleEquipo = () => {
     }
   }
 
-  const handleClick = (rowData) => {
+
+
+  const handleClick = (rowData, rowIndex) => {
     
-    // Convertir rowData en un objeto
-    const objetoParaGuardar = {
-      id: rowData.id,
-      nombreCompleto: rowData.nombreCompleto,
-      correo: rowData.correo,
-      numOficina: rowData.numOficina,
-      numCel: rowData.numCel,
-      codigoSede: rowData.codigoSede
-    };
+    localStorage.setItem("profe", rowIndex);
+    const nuevaData = {
+      "profes": [],
+      "profesGuia": data,
+    }
+    localStorage.setItem("profes",JSON.stringify(nuevaData));
+    localStorage.setItem("desplegarGuias", 1);
+    
+    console.log(localStorage.getItem("profe"))
+    console.log(nuevaData);
 
     // Guardar el objeto en localStorage
-    localStorage.setItem("profeIndividual", JSON.stringify(objetoParaGuardar));
-    var infoProfeJSON = localStorage.getItem("profeIndividual");
-    var infoProfe = JSON.parse(infoProfeJSON);
-    console.log(infoProfe);
+    //localStorage.setItem("profeIndividual", JSON.stringify(objetoParaGuardar));
+    //var infoProfeJSON = localStorage.getItem("profeIndividual");
+    //var infoProfe = JSON.parse(infoProfeJSON);
+    //console.log(infoProfe);
+    
     navigate('/infoProfe');
   };
 
   return (
     <div>
       <div>
-        <h1 className = "tituloPrincipal">{titulo} <label id="nombreCoordinador">{variable.nombreCompleto}</label></h1>  
+        <h1 className = "tituloPrincipal">{titulo} <label id="nombreCoordinador">{variable.nombre}</label></h1>  
         <h4 className='tituloPrincipal'> De click sobre un profesor para ver su perfil</h4>
       </div>
 
@@ -136,11 +127,11 @@ export const DetalleEquipo = () => {
             <tbody>
             {data && Array.isArray(data) && data.map((subArray, key) => {
               return subArray.map((val, subKey) => (
-                <tr key={`${key}-${subKey}`} onClick={() => handleClick(val)}>
-                  <td>{val.nombreCompleto}</td>
+                <tr key={`${key}-${subKey}`} onClick={() => handleClick(val, subKey)}>
+                  <td>{val.nombre}</td>
                   <td>{val.correo}</td>
-                  <td>{val.numOficina}</td>
-                  <td>{val.numCel}</td>
+                  <td>{val.telefono}</td>
+                  <td>{val.celular}</td>
                   <td>{val.codigoSede}</td>
                 </tr>
               ));

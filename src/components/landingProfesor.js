@@ -25,6 +25,7 @@ export const LandingProfesor = () => {
           <button className="button boton btn-submit" onClick={ ()=>navigate('/detalleEquipo') }>Detalle equipo de trabajo</button>
           <button className="button boton btn-submit" onClick={ ()=>navigate('/listaEstudiantes') }>Ver lista de estudiantes</button>
           <button className="button boton btn-submit" onClick={ ()=>generarExcel() }>Generar Excel de información estudiantil</button>
+          <button className="button boton btn-submit" onClick={ ()=>navigate('/cambiarContra') }>Cambiar Contraseña</button>
         </div>
         <div className='divVolver'>
           <button className="button boton btn-submit" onClick={ ()=>cierreSesion() }>Salir</button>

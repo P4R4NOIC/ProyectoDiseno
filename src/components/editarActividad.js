@@ -23,6 +23,10 @@ export const EditarActividad = () => {
     },
     fotos: [],
     descripcionCancelacion: "",
+    fechasAgregadas: [],
+    fechasEliminadas: [],
+    profesoresAgregados: [],
+    profesoresEliminados: [],
   });
 
   useEffect(() => {
@@ -58,12 +62,30 @@ export const EditarActividad = () => {
     }
   }, [formData.valoresGenerales.estado]); 
   
+  const [datosOriginales, setDatosOriginales] = useState({
+    arregloFechasOriginales: [],
+    arregloRepresentantesOriginales: [],
+  }) 
 
   useEffect(() => {
     const storedData = localStorage.getItem('actividadActual');
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       setFormData(parsedData);
+
+      setFormData(prevState => ({
+        ...prevState,
+        fechasAgregadas: [],
+        fechasEliminadas: [],
+        profesoresAgregados: [],
+        profesoresEliminados: [],
+      }));
+
+      setDatosOriginales(prevState => ({
+        ...prevState,
+        arregloFechasOriginales: parsedData.valoresGenerales.fechaRecordatorio,
+        arregloRepresentantesOriginales: parsedData.valoresGenerales.responsables
+      }));
     }
   }, []);
 
@@ -86,6 +108,7 @@ export const EditarActividad = () => {
     }));
   };
 
+  // Función para manejar cambios en la selección de profesores
   const handleChangeProfes = (selectedOptions) => {
     const selectedResponsables = selectedOptions.map(option => ({
       correo: option.correo,
@@ -98,12 +121,23 @@ export const EditarActividad = () => {
         responsables: selectedResponsables,
       }
     }));
+
+    // Calcular profesores agregados y eliminados
+    const listaProfesoresAgregados = encontrarProfesoresAgregados(datosOriginales.arregloRepresentantesOriginales, selectedResponsables);
+    const listaProfesoresEliminados = encontrarProfesoresEliminados(datosOriginales.arregloRepresentantesOriginales, selectedResponsables);
+
+    // Actualizar los estados profesoresAgregados y profesoresEliminados
+    setFormData(prevState => ({
+      ...prevState,
+      profesoresAgregados: listaProfesoresAgregados,
+      profesoresEliminados: listaProfesoresEliminados,
+    }));
   };
   
 
   const opcionesSemanas = [];
   for (let i = 1; i <= 16; i++) {
-    opcionesSemanas.push(<option key={i} value={`Semana${i}`}>Semana {i}</option>);
+    opcionesSemanas.push(<option key={i} value={i}>Semana {i}</option>);
   }
 
   const [opcionesProfes, setOpcionesProfes] = useState([]);
@@ -142,56 +176,88 @@ export const EditarActividad = () => {
 
     // Verificar si la nueva fecha no está vacía
     if (nuevaFecha.trim() !== '') {
-      setFormData(prevState => {
-        // Verificar si la nueva fecha ya existe en la lista de recordatorios
-        const fechaExistente = prevState.valoresGenerales.fechaRecordatorio.find(fecha => fecha.fechaR === nuevaFecha);
-        if (!fechaExistente) {
-          // Si la fecha no está repetida, agregarla a la lista de recordatorios en el estado formData
-          return {
-            ...prevState,
-            valoresGenerales: {
-              ...prevState.valoresGenerales,
-              fechaRecordatorio: [...prevState.valoresGenerales.fechaRecordatorio, { idFecRec: prevState.valoresGenerales.fechaRecordatorio.length + 1, idActividad: prevState.valoresGenerales.idActividad, fechaR: nuevaFecha }]
-            }
-          };
-        }
-        // Si la fecha ya existe, retornar el estado actual sin modificar
-        return prevState;
-      });
+        setFormData(prevState => {
+            // Verificar si la nueva fecha ya existe en la lista de recordatorios
+            const fechaExistente = prevState.valoresGenerales.fechaRecordatorio.find(fecha => fecha.fechaR === nuevaFecha);
+            if (!fechaExistente) {
+                // Si la fecha no está repetida, agregarla a la lista de recordatorios en el estado formData
+                const nuevaFechaRecordatorio = {
+                    idFecRec: prevState.valoresGenerales.fechaRecordatorio.length + 1,
+                    idActividad: prevState.valoresGenerales.idActividad,
+                    fechaR: nuevaFecha
+                };
+                const nuevaListaFechasRecordatorio = [...prevState.valoresGenerales.fechaRecordatorio, nuevaFechaRecordatorio];
 
-      // Reiniciar el campo de fecha después de agregarla
-      setNuevaFecha('');
+                // Actualizar fechas agregadas
+                const fechasAgregadas = encontrarFechasAgregadas(prevState.valoresGenerales.fechaRecordatorio, nuevaListaFechasRecordatorio);
+
+                return {
+                    ...prevState,
+                    valoresGenerales: {
+                        ...prevState.valoresGenerales,
+                        fechaRecordatorio: nuevaListaFechasRecordatorio
+                    },
+                    fechasAgregadas: fechasAgregadas
+                };
+            }
+            // Si la fecha ya existe, retornar el estado actual sin modificar
+            return prevState;
+        });
+
+        // Reiniciar el campo de fecha después de agregarla
+        setNuevaFecha('');
     }
   };
 
   // Función para eliminar una fecha de recordatorio
   const eliminarFechaRecordatorio = (idFecRec) => {
-    setFormData(prevState => ({
-      ...prevState,
-      valoresGenerales: {
-        ...prevState.valoresGenerales,
-        fechaRecordatorio: prevState.valoresGenerales.fechaRecordatorio.filter(fecha => fecha.idFecRec !== idFecRec)
-      }
-    }));
+    setFormData(prevState => {
+        // Filtrar la lista de recordatorios para eliminar la fecha con el idFecRec correspondiente
+        const nuevaListaFechasRecordatorio = prevState.valoresGenerales.fechaRecordatorio.filter(fecha => fecha.idFecRec !== idFecRec);
+
+        // Actualizar fechas eliminadas
+        const fechasEliminadas = encontrarFechasEliminadas(prevState.valoresGenerales.fechaRecordatorio, nuevaListaFechasRecordatorio);
+
+        return {
+            ...prevState,
+            valoresGenerales: {
+                ...prevState.valoresGenerales,
+                fechaRecordatorio: nuevaListaFechasRecordatorio
+            },
+            fechasEliminadas: fechasEliminadas
+        };
+    });
   };
 
 
   const handleChangeAfiche = (event) => {
     const archivo = event.target.files[0];
-    const reader = new FileReader();
   
-    reader.onload = (event) => {
-      const base64String = event.target.result;
+    // Verificar si el archivo es un Blob
+    if (archivo instanceof Blob) {
+      const reader = new FileReader();
+    
+      reader.onload = (event) => {
+        const base64String = event.target.result;
+        setFormData(prevState => ({
+          ...prevState,
+          valoresGenerales: {
+            ...prevState.valoresGenerales,
+            afiche: base64String,
+          }
+        }));
+      };
+    
+      reader.readAsDataURL(archivo);
+    }else{
       setFormData(prevState => ({
         ...prevState,
         valoresGenerales: {
           ...prevState.valoresGenerales,
-          afiche: base64String,
+          afiche: "",
         }
       }));
-    };
-  
-    reader.readAsDataURL(archivo);
+    }
   };
   
   const handleChangeImagenesActividad = (event) => {
@@ -216,18 +282,40 @@ export const EditarActividad = () => {
   const guardadoEnBase = async () => {
     try{
       // Lógica para guardar en la base de datos
+      
+
+    
       await validarDatos();
-  
+      
       console.log('Datos válidos, guardando en la base de datos...');
       console.log(formData);
-      //await subirDatos(formData);
-      localStorage.setItem('datosFormulario', JSON.stringify(formData));
+      subirDatos(formData);
+      //console.log(JSON.stringify(formData));
+      navigate('/planActividad');
     }
     catch(error){
       alert("Error: " + error.message);
     }
   };
+    // Función para encontrar las fechas que se agregaron
+    const encontrarFechasAgregadas = (originales, nuevas) => {
+      return nuevas.filter(fechaNueva => !originales.some(fechaOriginal => fechaOriginal.fechaR === fechaNueva.fechaR));
+    };
 
+    // Función para encontrar las fechas que se eliminaron
+    const encontrarFechasEliminadas = (originales, nuevas) => {
+      return originales.filter(fechaOriginal => !nuevas.some(fechaNueva => fechaNueva.fechaR === fechaOriginal.fechaR));
+    };
+
+    // Función para encontrar los profesores que se agregaron
+    const encontrarProfesoresAgregados = (originales, nuevos) => {
+      return nuevos.filter(profesorNuevo => !originales.some(profesorOriginal => profesorOriginal.correo === profesorNuevo.correo));
+    };
+
+    // Función para encontrar los profesores que se eliminaron
+    const encontrarProfesoresEliminados = (originales, nuevos) => {
+      return originales.filter(profesorOriginal => !nuevos.some(profesorNuevo => profesorNuevo.correo === profesorOriginal.correo));
+    };
   
   async function validarDatos() {
       if (formData.valoresGenerales.semana === "nulo"){
@@ -258,9 +346,9 @@ export const EditarActividad = () => {
       if (formData.valoresGenerales.responsables.length == 0){
         throw new Error('Debe de seleccionar al menos a un profesor');
       };
-      if (formData.valoresGenerales.afiche === ''){
-        throw new Error('Tiene que agregar un afiche');
-      };
+      // if (formData.valoresGenerales.afiche === ''){
+      //   throw new Error('Tiene que agregar un afiche');
+      // };
       if (formData.valoresGenerales.modalidad == 'nulo'){
         throw new Error('El tipo de asistencia no puede ser nulo');
       };
@@ -282,19 +370,20 @@ export const EditarActividad = () => {
         throw new Error('Debe de seleccionar un estado para la actividad');
       };
       
-      if (formData.valoresGenerales.estado === 'Realizada'){
-        if (formData.valoresGenerales.modalidad === 'Presencial'){
-          if (formData.fotos.length == 0){
-            throw new Error('Tiene que agregar evidencia en forma de una o varias fotos');
-          };
-        };
+      // Validacion para agregar fotos 
+      // if (formData.valoresGenerales.estado === 'Realizada'){
+      //   if (formData.valoresGenerales.modalidad === 'Presencial'){
+      //     if (formData.fotos.length == 0){
+      //       throw new Error('Tiene que agregar evidencia en forma de una o varias fotos');
+      //     };
+      //   };
 
-        if (formData.valoresGenerales.modalidad === 'Remota'){
-          if (formData.fotos.length == 0 && formData.descripcionCancelacion === ''){
-            throw new Error('Tiene que agregar evidencia en forma de una o varias fotos, o agregar el enlace para acceder a la grabación');
-          };
-        };
-      };
+      //   if (formData.valoresGenerales.modalidad === 'Remota'){
+      //     if (formData.fotos.length == 0 && formData.descripcionCancelacion === ''){
+      //       throw new Error('Tiene que agregar evidencia en forma de una o varias fotos, o agregar el enlace para acceder a la grabación');
+      //     };
+      //   };
+      // };
 
       if (formData.valoresGenerales.estado === 'Cancelada'){
         if (formData.descripcionCancelacion === ''){
@@ -305,12 +394,12 @@ export const EditarActividad = () => {
 
   async function subirDatos(formData) {
     try{
-      const response = await fetch('https://ejemplo.com/api/endpoint', {
-        method: 'POST',
+      const response = await fetch('http://18.222.222.154:5000/planes/update/actividad', {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json', 
         },
-        body: formData,
+        body: JSON.stringify(formData),
       });
       if (!response.ok) {
         throw new Error('Error al subir datos');
@@ -319,14 +408,14 @@ export const EditarActividad = () => {
       console.error('Error al subir datos:', error.message);
     }
   }
-  console.log(formData);
+  
   return (
     <div>
       
     <div className = "contenedor contenedorLargo">
         <div>
             <form className="form-signin"> 
-            <h2 className="form-signin-heading texto-login">Crear actividad</h2>
+            <h2 className="form-signin-heading texto-login">Editar actividad</h2>
               <label className = "textoGenera">Seleccionar semana:</label>
               
               <div>

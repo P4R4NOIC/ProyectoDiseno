@@ -19,9 +19,8 @@ export const Actividad = () => {
   //                     subComentarios:[{nombre:"Adriana Alvarez", comentario:"Me cago en todo"}, 
   //                     {nombre:"Adriana Alvarez", comentario:"Me cago en todo"}]}];
 
-  // var usuarioJSON = localStorage.getItem("usuario");
-  // var usuario = JSON.parse(usuarioJSON);
-  var usuario = {nombre: "Roberto"}
+  var usuarioJSON = localStorage.getItem("usuario");
+  var usuario = JSON.parse(usuarioJSON);
   const data = info;
   
   console.log(data);

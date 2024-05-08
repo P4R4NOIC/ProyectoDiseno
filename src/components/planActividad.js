@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 export const PlanActividad = () => {
   const navigate = useNavigate();
-  
 
   const [formData, setFormData] = useState({
     valoresGenerales: {
@@ -23,6 +22,7 @@ export const PlanActividad = () => {
     },
     fotos: [],
     descripcionCancelacion: "",
+    idPlan: "",
   });
 
   useEffect(() => {
@@ -57,6 +57,15 @@ export const PlanActividad = () => {
       }));
     }
   }, [formData.valoresGenerales.estado]); 
+  
+  useEffect(() => {
+    const idDelPlan = localStorage.getItem('idPlanActual');
+    setFormData(prevState => ({
+      ...prevState,
+      idPlan: idDelPlan,
+    }));
+  }, []);
+
   
 
   const handleChange = (e) => {
@@ -95,7 +104,7 @@ export const PlanActividad = () => {
 
   const opcionesSemanas = [];
   for (let i = 1; i <= 16; i++) {
-    opcionesSemanas.push(<option key={i} value={`Semana${i}`}>Semana {i}</option>);
+    opcionesSemanas.push(<option key={i} value={i}>Semana {i}</option>);
   }
 
   const [opcionesProfes, setOpcionesProfes] = useState([]);
@@ -170,20 +179,32 @@ export const PlanActividad = () => {
 
   const handleChangeAfiche = (event) => {
     const archivo = event.target.files[0];
-    const reader = new FileReader();
   
-    reader.onload = (event) => {
-      const base64String = event.target.result;
+    // Verificar si el archivo es un Blob
+    if (archivo instanceof Blob) {
+      const reader = new FileReader();
+    
+      reader.onload = (event) => {
+        const base64String = event.target.result;
+        setFormData(prevState => ({
+          ...prevState,
+          valoresGenerales: {
+            ...prevState.valoresGenerales,
+            afiche: base64String,
+          }
+        }));
+      };
+    
+      reader.readAsDataURL(archivo);
+    }else{
       setFormData(prevState => ({
         ...prevState,
         valoresGenerales: {
           ...prevState.valoresGenerales,
-          afiche: base64String,
+          afiche: "",
         }
       }));
-    };
-  
-    reader.readAsDataURL(archivo);
+    }
   };
   
   const handleChangeImagenesActividad = (event) => {
@@ -211,9 +232,12 @@ export const PlanActividad = () => {
       await validarDatos();
   
       console.log('Datos válidos, guardando en la base de datos...');
-      console.log(formData);
-      //await subirDatos(formData);
-      localStorage.setItem('datosFormulario', JSON.stringify(formData));
+      //console.log(formData);
+
+      console.log(JSON.stringify(formData));
+      await subirDatos(formData);
+      
+      navigate('/planActividad');
     }
     catch(error){
       alert("Error: " + error.message);
@@ -250,9 +274,9 @@ export const PlanActividad = () => {
       if (formData.valoresGenerales.responsables.length == 0){
         throw new Error('Debe de seleccionar al menos a un profesor');
       };
-      if (formData.valoresGenerales.afiche === ''){
-        throw new Error('Tiene que agregar un afiche');
-      };
+      // if (formData.valoresGenerales.afiche === ''){
+      //   throw new Error('Tiene que agregar un afiche');
+      // };
       if (formData.valoresGenerales.modalidad == 'nulo'){
         throw new Error('El tipo de asistencia no puede ser nulo');
       };
@@ -297,12 +321,12 @@ export const PlanActividad = () => {
 
   async function subirDatos(formData) {
     try{
-      const response = await fetch('https://ejemplo.com/api/endpoint', {
+      const response = await fetch('http://18.222.222.154:5000/planes/add/actividad', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', 
         },
-        body: formData,
+        body: JSON.stringify(formData),
       });
       if (!response.ok) {
         throw new Error('Error al subir datos');
@@ -311,7 +335,6 @@ export const PlanActividad = () => {
       console.error('Error al subir datos:', error.message);
     }
   }
-  console.log(formData);
 
   return (
     <div>
@@ -436,7 +459,7 @@ export const PlanActividad = () => {
            
             
               <button className="button boton btn-submit" type="button" onClick={guardadoEnBase}>
-                Editar actividad
+                Crear actividad
               </button>
               <button className="button boton btn-submit" type="button" onClick={()=>navigate(-1)}>
                 Volver

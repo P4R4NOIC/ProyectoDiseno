@@ -5,14 +5,14 @@ import { useNavigate } from "react-router-dom";
 export const ModEstudiante = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    carnet: '',
-    correo: '',
-    numCelular: '',
-    primerNombre: '',
-    segundoNombre: '',
-    primerApellido: '',
-    segundoApellido: '',
-    sede: '',
+    "Apellido": "",
+    "Carnet": "",
+    "Cel": "",
+    "Correo": "",
+    "Nombre": "",
+    "Sede": "",
+    "Segundo Apellido": "",
+    "Segundo Nombre": ""
   });
 
   useEffect(() => {
@@ -39,19 +39,19 @@ export const ModEstudiante = () => {
       //await subirDatos(formData);
     }
   };
-  const phoneRegex = /^[0-9]{10}$/;
+  const phoneRegex = /^[0-9]{8,10}$/;
   const correoEstudianteValido = /^[a-zA-Z0-9._%+-]+@estudiantec\.cr$/;
   const validarForm = () => {
     
-    if (formData.correo === "" || formData.primerNombre === "" || formData.primerApellido === "" || formData.segundoApellido === "") {
+    if (formData.Correo === "" || formData.Nombre === "" || formData.Apellido === "" || formData['Segundo Apellido'] === "") {
       alert('Por favor, complete todos los campos antes de guardar. (Celular y Segundo nombre son opcionales)');
       return false;
     }
-    if (!phoneRegex.test(formData.numCelular) && formData.numCelular !== ""){
+    if (!phoneRegex.test(formData.Cel) && formData.Cel !== ""){
       alert("Número de teléfono inválido");
       return false;
     }
-    if (!correoEstudianteValido.test(formData.correo)) {
+    if (!correoEstudianteValido.test(formData.Correo)) {
       alert("Correo inválido");
       return false;
     }
@@ -82,35 +82,35 @@ export const ModEstudiante = () => {
       <form>
         <div>
           <label className='textoGenera'>Carnet:</label>
-          <input type="text" id="carnet" name="carnet" value={formData.carnet} onChange={handleChange} className="form-control disabled entrada" disabled/>
+          <input type="text" id="carnet" name="Carnet" value={formData.Carnet} onChange={handleChange} className="form-control disabled entrada" disabled/>
         </div>
         <div>
           <label className='textoGenera'>Correo:</label>
-          <input type="email" id="correo" name="correo" value={formData.correo} onChange={handleChange} className="form-control entrada"/>
+          <input type="email" id="correo" name="Correo" value={formData.Correo} onChange={handleChange} className="form-control entrada"/>
         </div>
         <div>
           <label className='textoGenera'>Número de Celular:</label>
-          <input type="text" id="numCelular" name="numCelular" value={formData.numCelular} onChange={handleChange} className="form-control entrada"/>
+          <input type="text" id="numCelular" name="Cel" value={formData.Cel} onChange={handleChange} className="form-control entrada"/>
         </div>
         <div>
           <label className='textoGenera'>Primer Nombre:</label>
-          <input type="text" id="primerNombre" name="primerNombre" value={formData.primerNombre} onChange={handleChange} className="form-control entrada"/>
+          <input type="text" id="primerNombre" name="Nombre" value={formData.Nombre} onChange={handleChange} className="form-control entrada"/>
         </div>
         <div>
           <label className='textoGenera'>Segundo Nombre:</label>
-          <input type="text" id="segundoNombre" name="segundoNombre" value={formData.segundoNombre} onChange={handleChange} className="form-control entrada"/>
+          <input type="text" id="segundoNombre" name="Segundo Nombre" value={formData['Segundo Nombre']} onChange={handleChange} className="form-control entrada"/>
         </div>
         <div>
           <label className='textoGenera'>Primer apellido:</label>
-          <input type="text" id="primerApellido" name="primerApellido" value={formData.primerApellido} onChange={handleChange} className="form-control entrada"/>
+          <input type="text" id="primerApellido" name="Apellido" value={formData.Apellido} onChange={handleChange} className="form-control entrada"/>
         </div>
         <div>
           <label className='textoGenera'>Segundo apellido:</label>
-          <input type="text" id="segundoApellido" name="segundoApellido" value={formData.segundoApellido} onChange={handleChange} className="form-control entrada"/>
+          <input type="text" id="segundoApellido" name="Segundo Apellido" value={formData['Segundo Apellido']} onChange={handleChange} className="form-control entrada"/>
         </div>
         <div>
           <label className='textoGenera'>Sede:</label>
-          <input type="text" id="sede" name="sede" value={formData.sede} onChange={handleChange} className="form-control disabled entrada" disabled/>
+          <input type="text" id="sede" name="Sede" value={formData.Sede} onChange={handleChange} className="form-control disabled entrada" disabled/>
         </div>
         <button className="button boton btn-submit" type="button" onClick={guardadoEnBase}>Guardar</button>
       </form>

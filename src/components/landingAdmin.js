@@ -7,6 +7,25 @@ import { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import * as XLSX from 'xlsx';
 export const LandingAdmin = () => {
+ 
+ var sesion;
+  if( localStorage.getItem("conexionEsp") == 1){
+    sesion = "San Jose"
+  }
+  if( localStorage.getItem("conexionEsp") == 2){
+    sesion = "Limon"
+  }
+  if( localStorage.getItem("conexionEsp") == 3){
+    sesion = "San Carlos"
+  }
+  if( localStorage.getItem("conexionEsp") == 4){
+    sesion = "Alajuela"
+  }
+  if( localStorage.getItem("conexionEsp") == 5){
+    sesion = "Cartago"
+  }
+console.log(sesion)
+
 
   var archivosLista = ["estudiantes.xlsx", "est2024.xlsx","est2025.xlsx"]
   var profesJSON = {profes:[], guias:[]}
@@ -24,7 +43,7 @@ export const LandingAdmin = () => {
     const navigate = useNavigate();
     localStorage.setItem("coordinador", 0);
   
-    var variable= localStorage.getItem("usuario");
+    var variable= JSON.parse(localStorage.getItem("usuario"))["correo"];
     var profes = []
 
    
@@ -32,7 +51,7 @@ export const LandingAdmin = () => {
 const getExcel = async () => {
   try {
    
-        const response = await fetch(`http://18.222.222.154:5000/excel/recuperar/estudiantes.xlsx`, {
+        const response = await fetch(`http://18.222.222.154:5000/excel/recuperar`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -47,6 +66,7 @@ const getExcel = async () => {
 
         // Convertir la respuesta a formato JSON
         const data = await response.json();
+     //   console.log(data)
       localStorage.setItem("estudiantes", JSON.stringify(data))
         return data;
         
@@ -58,7 +78,8 @@ const getExcel = async () => {
 const getProfes = async () =>{
   try {
    
-    const response = await fetch(`http://18.222.222.154:5000/profes/detalleF/1`, {
+   const response = await fetch(`http://18.222.222.154:5000/profes/detalleF/${localStorage.getItem("conexionEsp")}`, {
+   //   const response = await fetch(`http://18.222.222.154:5000/profes/detalleF/1`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -73,7 +94,7 @@ const getProfes = async () =>{
 
     // Convertir la respuesta a formato JSON
     const data = await response.json();
-   //console.log(data)
+   console.log(data)
   
    //console.log(enviar)
    
@@ -89,10 +110,10 @@ throw new Error(error.message);
 
    async function creaEstudiantes(){
       const excelActual = await getExcel();
-      for(var i = 0; i < excelActual.length;i++){
+      for(var i = 0; i < excelActual["excel"].length;i++){
         var div = document.createElement("div");
         div.classList = "textoCaja";
-        div.textContent = excelActual[i]["Nombre"] + " " + excelActual[i]["Segundo Nombre"] + " " + excelActual[i]["Apellido"] + " " + excelActual[i]["Segundo Apellido"];
+        div.textContent = excelActual["excel"][i]["Nombre"] + " " + excelActual["excel"][i]["Segundo Nombre"] + " " + excelActual["excel"][i]["Apellido"] + " " + excelActual["excel"][i]["Segundo Apellido"];
         document.getElementById("colEst").appendChild(div);
       }
       
@@ -149,15 +170,21 @@ throw new Error(error.message);
           
         }
       }
+      var nombreSes;
     useEffect(()=>{
      // var fs = require('fs');
       //var files = fs.readdirSync('/public');
         creaProfesGuia();
         creaProfes();
         creaEstudiantes();
-        localStorage.setItem("listas", JSON.stringify(profesJSON))
+     
      // console.log(profesJSON)
-      }, [])
+      }, []);
+
+      function cierreSesion(){
+        localStorage.clear();
+        navigate('/login');
+      }
   return (
     <div>
         <h1 class = "tituloPrincipal">Asistente Administrativo: <label id="nombreProfesor">{variable}</label></h1>  
@@ -183,7 +210,7 @@ throw new Error(error.message);
         </div>
         </div>
         <div class="col columna-der columna">
-        <div class=" titulo"> Lista de Profesores *sede*</div>
+        <div class=" titulo"> Lista de Profesores {sesion}</div>
         <div class = "scroll" id = "colProfes">
         
         </div>
@@ -219,7 +246,7 @@ throw new Error(error.message);
 
 
 
-<button className="button boton btn-submit" type="button" onClick={()=>navigate('/login')}>Volver</button>
+<button className="button boton btn-submit" onClick={ ()=>cierreSesion() }>Salir</button>
            
 
 
