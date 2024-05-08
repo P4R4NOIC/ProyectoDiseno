@@ -235,7 +235,7 @@ throw new Error(error.message);
     <button className="button boton btn-submit" type="button" onClick={()=>navigate('/agregaEstudiante')}>Registrar Nuevo Ingreso</button>
     </div>
     <div class="col botonAdm">
-    <button className="button boton btn-submit" type="button">Ver Próxima Actividad</button>
+    <button className="button boton btn-submit" type="button"onClick = {()=>navigate('/actividad')}>Ver Próxima Actividad</button>
     </div>
     <div class="col columna-der botonAdm">
     <button className="button boton btn-submit botonAdmin" type="button" onClick={()=>navigate('/subirExcel')}>Subir Excel</button>

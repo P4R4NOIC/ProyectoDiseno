@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 export const ModProfe = () => {
-    var variable= localStorage.getItem("usuario");
+  var variable= JSON.parse(localStorage.getItem("usuario"))["correo"];
     const navigate = useNavigate();
     var profes;
     if(localStorage.getItem("desplegarGuias") == 1){
@@ -34,7 +34,7 @@ export const ModProfe = () => {
         return;
       }
       
-      var oficina = document.getElementById("inputOFI").value
+      var oficina = document.getElementById("inputOfi").value
       if(oficina == "" || !oficina.trim().length){
        
         alert("Error: hay espacios importantes vacios");
@@ -50,26 +50,26 @@ export const ModProfe = () => {
       }
       var sede = localStorage.getItem("conexionEsp")
      
-      var correo = document.getElementById("inputCorreo").value
-      if(correo == "" || !correo.trim().length){
-       
-        alert("Error: hay espacios importantes vacios");
-        return;
-      }
-      if(!correoProfesorValido.test(correo)){
-        alert("Error: El formato del correo no es correcto");
-        return;
-      }
+      var correo = profe["correo"]
+      
       var foto = profe["foto"]
       var guia = profe["guia"];
       var coordinador = profe["coordinador"];
       var completo = nombre 
       var nuevoProfe = {activo:activo,celular:celular, coordinador:coordinador, correo:correo, foto:foto,guia:guia,idSede:sede, nombre:completo, telefono:oficina}
       console.log(nuevoProfe)
+      var enviar = JSON.stringify(nuevoProfe)
+      fetch('http://18.222.222.154:5000/profes/update/' , {
+      method: 'PUT',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+      body: enviar
+    })
     }
     function cargaPlaceHolder(){
       document.getElementById("inputNombre").placeholder = profe["nombre"]
-      document.getElementById("inputCorreo").placeholder = profe["correo"]
+ 
       document.getElementById("inputOfi").placeholder = profe["telefono"]
       document.getElementById("inputCel").placeholder = profe["celular"]
     }
@@ -87,8 +87,7 @@ export const ModProfe = () => {
            <label class = "textoGenera">Nombre:</label>
            <input type="text" id="inputNombre" className="form-control entrada" placeholder="Nombre" required="" autoFocus=""></input>
           
-           <label class = "textoGenera">Correo:</label>
-           <input type="mail" id="inputCorreo" className="form-control entrada" placeholder="Correo" required=""></input>
+       
            <label class = "textoGenera">Numero de Telefono Oficina:</label>
            <input type="number" id="inputOfi" className="form-control entrada" placeholder="Numero de Telefono Oficina" required=""></input>
            <label class = "textoGenera">Numero de Telefono Celular:</label>
@@ -98,7 +97,7 @@ export const ModProfe = () => {
          
         
          
-           <button className="button boton btn-submit" type="button" >
+           <button className="button boton btn-submit" type="button" onClick={() => crearProfe()} >
              Guardar
            </button>
            <button className="button boton btn-submit" type="button" onClick={()=>navigate('/landingAdmin')}>

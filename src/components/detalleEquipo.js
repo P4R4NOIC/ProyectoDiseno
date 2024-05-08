@@ -145,7 +145,7 @@ export const DetalleEquipo = () => {
         <button className="button boton btn-submit" onClick={ ()=>detectarProximaActividad() }>Próxima actividad</button>
       </div>
       <div className='divVolver'>
-        <button className="button boton btn-submit" onClick={ ()=> navigate(-1)}>Volver</button>
+        <button className="button boton btn-submit" onClick={ ()=> navigate('/landingProfesor')}>Volver</button>
       </div>
       
     </div>

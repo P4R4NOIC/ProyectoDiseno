@@ -36,9 +36,12 @@ export const ModEstudiante = () => {
       // Lógica para guardar en la base de datos
       console.log('Datos válidos, guardando en la base de datos...');
       console.log(formData)
-      //await subirDatos(formData);
+      await subirDatos(formData);
+      navigate(-1);
     }
   };
+
+  
   const phoneRegex = /^[0-9]{8,10}$/;
   const correoEstudianteValido = /^[a-zA-Z0-9._%+-]+@estudiantec\.cr$/;
   const validarForm = () => {
@@ -60,21 +63,23 @@ export const ModEstudiante = () => {
   };
 
   async function subirDatos(formData) {
-    try{
-      const response = await fetch('https://ejemplo.com/api/endpoint', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', 
-        },
-        body: formData,
-      });
-      if (!response.ok) {
-        throw new Error('Error al subir datos');
-      }
-    }catch(error){
-      console.error('Error al subir datos:', error.message);
+    console.log(formData)
+    try {
+        const response = await fetch('http://18.222.222.154:5000/profes/update/Estudiante', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al obtener los datos');
+        }
+    } catch (error) {
+        throw new Error('Error al obtener los datos:', error.message);
     }
-  }
+}
 
   return (
     <div className='cajaBasica'>

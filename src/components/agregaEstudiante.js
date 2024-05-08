@@ -67,7 +67,7 @@ export const AgregaEstudiante = () => {
     estudiantes["excel"].push(estudianteNuevo);
     console.log(estudiantes);
 
-   /* var enviar = JSON.stringify(estudiantes)
+   var enviar = JSON.stringify(estudiantes)
       console.log(estudiantes)
       fetch('http://18.222.222.154:5000/excel/subir', {
         method: 'POST',
@@ -75,7 +75,7 @@ export const AgregaEstudiante = () => {
             'Content-Type': 'application/json'
         },
         body: enviar
-    })*/
+    })
      // console.log(excelActual)
       
     

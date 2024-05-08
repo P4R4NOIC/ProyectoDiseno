@@ -124,7 +124,7 @@ const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
         }
       }
       else{
-        const response = await fetch(`http://18.222.222.154:5000/profes/guia/${email}`, {
+        const response = await fetch(`https://18.222.222.154:5000/profes/guia/${email}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

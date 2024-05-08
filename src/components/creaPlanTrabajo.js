@@ -6,8 +6,8 @@ export const CreaPlanTrabajo = () => {
   const navigate = useNavigate();
  
   const [formData, setFormData] = useState({
-    anno: '',
     semestre: 'nulo',
+    anno: '',
 });
 
   const handleChange = (e) => {
@@ -18,12 +18,14 @@ export const CreaPlanTrabajo = () => {
     }));
   };
 
-  const guardarPlan = () => {
+  const guardarPlan = async () => {
     try{
         validarDatos();
         
         console.log('Datos válidos, guardando en la base de datos...');
-        //await subirDatos(formData);
+        console.log(formData)
+        await subirDatos(formData);
+        navigate('/planTrabajo');
         
       }catch(error){
         alert("Error: " + error.message);
@@ -44,18 +46,18 @@ export const CreaPlanTrabajo = () => {
 
   async function subirDatos(formData) {
     try{
-      const response = await fetch('https://ejemplo.com/api/endpoint', {
+      const response = await fetch('http://18.222.222.154:5000/planes/add/Plan', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', 
         },
-        body: formData,
+        body: JSON.stringify(formData),
       });
       if (!response.ok) {
-        throw new Error('Error al subir datos');
+        throw new Error('Error al subir datos, datos inválidos');
       }
     }catch(error){
-      console.error('Error al subir datos:', error.message);
+      throw new Error(error.message);
     }
   }
 

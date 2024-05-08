@@ -291,7 +291,7 @@ export const EditarActividad = () => {
       console.log(formData);
       subirDatos(formData);
       //console.log(JSON.stringify(formData));
-      navigate('/planActividad');
+      navigate('/planTrabajo');
     }
     catch(error){
       alert("Error: " + error.message);

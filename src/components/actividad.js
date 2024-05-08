@@ -10,6 +10,36 @@ export const Actividad = () => {
   var infoJSON = localStorage.getItem("actividadActual");
   var info = JSON.parse(infoJSON);
   
+
+const getComentarios = async () => {
+  try {
+   
+        const response = await fetch(`http://18.222.222.154:5000/planes/comentarioXactividades/`+ JSON.parse(infoJSON)["valoresGenerales"]["idActividad"], {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // Verificar si la respuesta es exitosa
+        if (!response.ok) {
+          // Si la respuesta no es exitosa, lanzar un error
+          throw new Error('Error al obtener los datos del usuario');
+        }
+
+        // Convertir la respuesta a formato JSON
+        const data = await response.json();
+      console.log(data)
+      
+        return data;
+        
+      
+  } catch (error){
+    throw new Error(error.message);
+  }
+}
+
+  var sesionUsuario = localStorage.getItem('sesionUsuario');
   // var comentarios = [{nombre: "Adriana Alvarez", comentario:"Actividad de mierda asi al puro vuela", 
   //                     subComentarios:[{nombre:"Francisco Torres", comentario:"Me cago en todo"}, 
   //                     {nombre:"Adriana Alvarez", comentario:"Me cago en todo"}]},
@@ -38,7 +68,9 @@ export const Actividad = () => {
   }));
 
   function enviarComentario(id, numero){
-  
+    console.log("comentarios")
+    var comentarios = JSON.parse(localStorage.getItem("comentarios"))
+    console.log(JSON.parse(localStorage.getItem("comentarios")))
       document.getElementById(id).hidden = true;
       document.getElementById("botonComentario" + numero).hidden = false;
       document.getElementById("story" + numero).hidden = true;
@@ -46,7 +78,22 @@ export const Actividad = () => {
 
     if(document.getElementById("story" + numero).value !== ""){
       var subComentarioNuevo = {nombre:usuario["nombre"], comentario:document.getElementById("story" + numero).value}
-      comentarios[numero]["subComentarios"].push(subComentarioNuevo);
+      var comentarioJSON = {idComentario:comentarios[numero]["idComentario"], correo:usuario["correo"], respuesta:document.getElementById("story" + numero).value}
+      console.log(comentarioJSON)
+      var enviar = JSON.stringify(comentarioJSON)
+      
+      
+
+      fetch('http://18.222.222.154:5000/planes/add/Respuesta', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: enviar,
+       
+      })
+
+     
       document.getElementById("todosComentarios").remove();
       var div = document.createElement("div")
       div.id= "todosComentarios";
@@ -72,8 +119,34 @@ export const Actividad = () => {
   function agregarComentario() {
     console.log(usuario["nombre"])
     console.log(document.getElementById("comentario").value)
+    var date = new Date();
+    var año = date.getFullYear()
+    var mes = date.getMonth()
+    var dia = date.getDay()
+    var horas = date.getHours()%12
+    var minutos = date.getMinutes()
+    var segundos = date.getSeconds()
+    var fechaEmision = año + "-" + mes + "-" + dia + " " + horas+ ":" + minutos + ":"+ segundos
+   // console.log(segundos)
+
     if(document.getElementById("comentario").value !== ""){
-      var nuevoComentario = {nombre:usuario["nombre"], comentario:document.getElementById("comentario").value, subComentarios:[]};
+      var nuevoComentario = {nombre:usuario["nombreCompleto"], comentario:document.getElementById("comentario").value, subComentarios:[]};
+      console.log(JSON.parse(infoJSON)["valoresGenerales"]["idActividad"])
+      console.log(JSON.parse(infoJSON))
+
+      var comentarioJSON = {idActividad:JSON.parse(infoJSON)["valoresGenerales"]["idActividad"], correo:usuario["correo"], comentario:document.getElementById("comentario").value}
+      var enviar = JSON.stringify(comentarioJSON)
+      console.log(comentarioJSON)
+
+      fetch('http://18.222.222.154:5000/planes/add/Comentario' , {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: enviar,
+       
+      })
+
       comentarios.push(nuevoComentario);
       document.getElementById("todosComentarios").remove();
       var div = document.createElement("div")
@@ -81,12 +154,14 @@ export const Actividad = () => {
 
       document.getElementById("documento").appendChild(div)
       console.log(comentarios)
-      cargarComentarios();
+      cargarComentarios()
      // crearComentario(usuario["nombre"], document.getElementById("comentario").value, temp);
     }
   }
 
-  function cargarComentarios(){
+  async function cargarComentarios(){
+    const comentarios = await getComentarios()
+    localStorage.setItem("comentarios",JSON.stringify(comentarios))
     for(var i = 0; i<comentarios.length; i++){
       var label1 = document.createElement("label");
       var div1 = document.createElement("div");
@@ -99,7 +174,7 @@ export const Actividad = () => {
      
       var button1 = document.createElement("button");
       
-  
+      var label5 = document.createElement("label")
       var textArea = document.createElement("textarea");
       var button2 = document.createElement("button");
       textArea.classList = "comentario"
@@ -127,7 +202,8 @@ export const Actividad = () => {
       div1.classList = "cajaTabla comentarioCaja"
       div1.id = "comentarios" + i
   
-      label1.textContent = comentarios[i]["nombre"] 
+      label1.textContent = comentarios[i]["nombreCompleto"] 
+      label5.textContent = comentarios[i]["fechaEmision"]
       label2.textContent = comentarios[i]["comentario"]
 
       button1.classList = "botonComentario"
@@ -137,28 +213,37 @@ export const Actividad = () => {
         comentarComentario(this.id, this.getAttribute("numero"),0)
       }
       button1.textContent = "Comentar"
+      var div6 = document.createElement("div");
+      div6.appendChild(label5)
+      div1.appendChild(div6)
       div1.appendChild(label1)
+      
       div2.appendChild(label2)
+      
       div1.appendChild(div2)
-      if(comentarios[i]["subComentarios"].length > 0){
+      if(comentarios[i]["respuestas"].length > 0){
 
         var h5 = document.createElement("h5");
         h5.classList = "tituloSub";
         h5.textContent = "Comentarios: "
         div1.appendChild(h5)
-        for(var j = 0; j<comentarios[i]["subComentarios"].length; j++){
+        for(var j = 0; j<comentarios[i]["respuestas"].length; j++){
           
           var div3 = document.createElement("div");
           var label3 = document.createElement("label");
           var div4 = document.createElement("div");
           var label4 = document.createElement("label");
-          
+          var label7 = document.createElement("label")
           div3.classList = "subcomentarioCaja"
           label3.classList = "textoSub"
-          label3.textContent = comentarios[i]["subComentarios"][j]["nombre"]
-
+          label3.textContent = comentarios[i]["respuestas"][j]["nombreCompleto"]
+          label7.classList = "textoSub"
+          label7.textContent = comentarios[i]["respuestas"][j]["fechaEmision"]
           label4.classList = "textoSub"
-          label4.textContent = comentarios[i]["subComentarios"][j]["comentario"]
+          label4.textContent = comentarios[i]["respuestas"][j]["respuesta"]
+          var div5 = document.createElement("div");
+          div5.appendChild(label7)
+          div4.appendChild(div5)
           div4.appendChild(label4)
           div3.appendChild(label3)
           div3.appendChild(div4)
@@ -294,22 +379,25 @@ export const Actividad = () => {
         </div>
       </div>
 
-      <div className='cajaTabla'>
-        <h2>Escribir un Comentario</h2>
-      <textarea className = "comentario" id="comentario" name="story" rows="5" cols="200" placeholder='Comentario'>
+      {sesionUsuario === "PROFESOR" && (
+      <div>
+          <div className='cajaTabla'>
+            <h2>Escribir un Comentario</h2>
+          <textarea className = "comentario" id="comentario" name="story" rows="5" cols="200" placeholder='Comentario'>
 
-      </textarea>
-        <button className="button boton btn-submit" onClick={ ()=> agregarComentario()}>Agregar comentario</button>
-        {/*Comentarios*/}
+          </textarea>
+            <button className="button boton btn-submit" onClick={ ()=> agregarComentario()}>Agregar comentario</button>
+            {/*Comentarios*/}
+          </div>
+
+
+          
+          <div className='cajaTabla' ><h2>Comentarios:</h2></div>
+          <div id = "todosComentarios">
+            
+          </div>
       </div>
-
-
-      
-      <div className='cajaTabla' ><h2>Comentarios:</h2></div>
-      <div id = "todosComentarios">
-        
-      </div>
-
+      )}
      
 </div>
   )
