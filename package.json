@@ -1,5 +1,5 @@
 {
-  "homepage": "http://fernandogross06.github.io/",
+
   "name": "my-react-app",
   "version": "0.1.0",
   "private": true,
@@ -19,8 +19,7 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+   
     "start": "react-scripts start",
 
     "build": "CI=false && react-scripts build",
