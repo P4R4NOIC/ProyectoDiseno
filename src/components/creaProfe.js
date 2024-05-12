@@ -59,7 +59,7 @@ export const CreaProfe = () => {
     console.log(nuevoProfe)
 
     var enviar = JSON.stringify(nuevoProfe)
-    fetch('http://18.222.222.154:5000/profes/add/profesor' , {
+    fetch('https://diseno-api.onrender.com/profes/add/profesor' , {
       method: 'POST',
       headers: {
       'Content-Type': 'application/json'

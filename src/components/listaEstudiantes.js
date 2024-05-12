@@ -11,7 +11,7 @@ export const ListaEstudiantes = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://18.222.222.154:5000/excel/recuperarTodos`, {
+        const response = await fetch(`https://diseno-api.onrender.com/excel/recuperarTodos`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

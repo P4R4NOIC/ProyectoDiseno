@@ -24,7 +24,7 @@ export const PlanTrabajo = () => {
   useEffect(() => {
     const obtenerInfo = async () => {
       try {
-        const response = await fetch(`http://18.222.222.154:5000/planes/`, {
+        const response = await fetch(`https://diseno-api.onrender.com/planes/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export const PlanTrabajo = () => {
 
   const pedirListaActividades = async (idPlan) => {
     try {
-      const response = await fetch(`http://18.222.222.154:5000/planes/actividades/${idPlan}`, {
+      const response = await fetch(`https://diseno-api.onrender.com/planes/actividades/${idPlan}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

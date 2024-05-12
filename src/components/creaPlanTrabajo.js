@@ -46,7 +46,7 @@ export const CreaPlanTrabajo = () => {
 
   async function subirDatos(formData) {
     try{
-      const response = await fetch('http://18.222.222.154:5000/planes/add/Plan', {
+      const response = await fetch('https://diseno-api.onrender.com/planes/add/Plan', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', 

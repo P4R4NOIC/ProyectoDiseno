@@ -14,7 +14,7 @@ export const Actividad = () => {
 const getComentarios = async () => {
   try {
    
-        const response = await fetch(`http://18.222.222.154:5000/planes/comentarioXactividades/`+ JSON.parse(infoJSON)["valoresGenerales"]["idActividad"], {
+        const response = await fetch(`https://diseno-api.onrender.com/planes/comentarioXactividades/`+ JSON.parse(infoJSON)["valoresGenerales"]["idActividad"], {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const getComentarios = async () => {
       
       
 
-      fetch('http://18.222.222.154:5000/planes/add/Respuesta', {
+      fetch('https://diseno-api.onrender.com/planes/add/Respuesta', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json'
@@ -138,7 +138,7 @@ const getComentarios = async () => {
       var enviar = JSON.stringify(comentarioJSON)
       console.log(comentarioJSON)
 
-      fetch('http://18.222.222.154:5000/planes/add/Comentario' , {
+      fetch('https://diseno-api.onrender.com/planes/add/Comentario' , {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json'

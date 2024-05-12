@@ -76,7 +76,7 @@ export const InfoProfe = () => {
             
             var eliminar = {correo:profes[j]["correo"],idEquipo:1}
             console.log("eliminar")
-            fetch('http://18.222.222.154:5000/profes/deleteIntegrante' , {
+            fetch('https://diseno-api.onrender.com/profes/deleteIntegrante' , {
               method: 'DELETE',
               headers: {
               'Content-Type': 'application/json'
@@ -84,7 +84,7 @@ export const InfoProfe = () => {
               body: JSON.stringify(eliminar)
             })
             console.log("eliminar coordinador")
-            fetch('http://18.222.222.154:5000/profes/setCoordinador' , {
+            fetch('https://diseno-api.onrender.com/profes/setCoordinador' , {
               method: 'DELETE',
               headers: {
               'Content-Type': 'application/json'
@@ -96,7 +96,7 @@ export const InfoProfe = () => {
             var enviar = JSON.stringify(hacer)
             console.log("agregar profe")
             
-            fetch('http://18.222.222.154:5000/profes/addIntegrante' , {
+            fetch('https://diseno-api.onrender.com/profes/addIntegrante' , {
               method: 'POST',
               headers: {
               'Content-Type': 'application/json'
@@ -110,7 +110,7 @@ export const InfoProfe = () => {
         }else{
           console.log("eliminar")
           var eliminar = {correo:profes[j]["correo"],idEquipo:1}
-          fetch('http://18.222.222.154:5000/profes/deleteIntegrante' , {
+          fetch('https://diseno-api.onrender.com/profes/deleteIntegrante' , {
             method: 'DELETE',
             headers: {
             'Content-Type': 'application/json'
@@ -127,7 +127,7 @@ export const InfoProfe = () => {
             var enviar = JSON.stringify(hacer)
             console.log("agregar profe")
             
-            fetch('http://18.222.222.154:5000/profes/addIntegrante' , {
+            fetch('https://diseno-api.onrender.com/profes/addIntegrante' , {
               method: 'POST',
               headers: {
               'Content-Type': 'application/json'
@@ -148,7 +148,7 @@ export const InfoProfe = () => {
         console.log(hacer)
         console.log("agregar profe")
         
-        fetch('http://18.222.222.154:5000/profes/addIntegrante' , {
+        fetch('https://diseno-api.onrender.com/profes/addIntegrante' , {
           method: 'POST',
           headers: {
           'Content-Type': 'application/json'
@@ -171,7 +171,7 @@ export const InfoProfe = () => {
        
         var eliminar = {correo:profes[i]["correo"],idEquipo:1}
             console.log("eliminar")
-            fetch('http://18.222.222.154:5000/profes/deleteIntegrante' , {
+            fetch('https://diseno-api.onrender.com/profes/deleteIntegrante' , {
               method: 'DELETE',
               headers: {
               'Content-Type': 'application/json'
@@ -179,7 +179,7 @@ export const InfoProfe = () => {
               body: eliminar
             })
             console.log("eliminar coordinador")
-            fetch('http://18.222.222.154:5000/profes/setCoordinador' , {
+            fetch('https://diseno-api.onrender.com/profes/setCoordinador' , {
               method: 'DELETE',
               headers: {
               'Content-Type': 'application/json'
@@ -200,7 +200,7 @@ export const InfoProfe = () => {
       var eliminar = {correo:profes[i]["correo"],idEquipo:1}
       
             console.log("eliminar")
-            fetch('http://18.222.222.154:5000/profes/deleteIntegrante' , {
+            fetch('https://diseno-api.onrender.com/profes/deleteIntegrante' , {
               method: 'DELETE',
               headers: {
               'Content-Type': 'application/json'
@@ -229,7 +229,7 @@ export const InfoProfe = () => {
    function darDeBaja(){
       var matar = profes[i]["correo"]
       console.log("dar de baja")
-      fetch('http://18.222.222.154:5000/profes/deleteProfesor/' + matar, {
+      fetch('https://diseno-api.onrender.com/profes/deleteProfesor/' + matar, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -243,7 +243,7 @@ export const InfoProfe = () => {
     console.log("--eliminar coordinador--")
     var eliminar = {correo:profes[i]["correo"],idEquipo:1}
     var enviar = JSON.stringify(eliminar)
-    fetch('http://18.222.222.154:5000/profes/setCoordinador' , {
+    fetch('https://diseno-api.onrender.com/profes/setCoordinador' , {
       method: 'PUT',
       headers: {
       'Content-Type': 'application/json'
@@ -271,7 +271,7 @@ export const InfoProfe = () => {
     console.log("--eliminar coordinador--")
     
     var quitar = JSON.stringify(eliminar)
-    fetch('http://18.222.222.154:5000/profes/setCoordinador' , {
+    fetch('https://diseno-api.onrender.com/profes/setCoordinador' , {
       method: 'PUT',
       headers: {
       'Content-Type': 'application/json'
@@ -281,7 +281,7 @@ export const InfoProfe = () => {
     console.log("--eliminar coordinador--")
     var agregar = {correo:profes[i]["correo"],idEquipo:1}
     var enviar = JSON.stringify(agregar)
-    fetch('http://18.222.222.154:5000/profes/setCoordinador' , {
+    fetch('https://diseno-api.onrender.com/profes/setCoordinador' , {
       method: 'PUT',
       headers: {
       'Content-Type': 'application/json'
@@ -292,7 +292,7 @@ export const InfoProfe = () => {
     console.log("agregar profe")
     var agregar = {correo:profes[i]["correo"],idEquipo:1}
     var enviar = JSON.stringify(agregar)
-    fetch('http://18.222.222.154:5000/profes/setCoordinador' , {
+    fetch('https://diseno-api.onrender.com/profes/setCoordinador' , {
       method: 'PUT',
       headers: {
       'Content-Type': 'application/json'

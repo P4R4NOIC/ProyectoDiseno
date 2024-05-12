@@ -145,7 +145,7 @@ export const EditarActividad = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://18.222.222.154:5000/profes/detalle`, {
+        const response = await fetch(`https://diseno-api.onrender.com/profes/detalle`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -394,7 +394,7 @@ export const EditarActividad = () => {
 
   async function subirDatos(formData) {
     try{
-      const response = await fetch('http://18.222.222.154:5000/planes/update/actividad', {
+      const response = await fetch('https://diseno-api.onrender.com/planes/update/actividad', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json', 

@@ -25,7 +25,7 @@ export const DetalleEquipo = () => {
   useEffect(() => {
     const obtenerDetalleEquipo = async () => {
       try {
-        const response = await fetch(`http://18.222.222.154:5000/profes/detalle`, {
+        const response = await fetch(`https://diseno-api.onrender.com/profes/detalle`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export const DetalleEquipo = () => {
   const pedirProximaActividad = async () => {
     try {
         
-        const response = await fetch(`http://18.222.222.154:5000/profes/guia`, {
+        const response = await fetch(`https://diseno-api.onrender.com/profes/guia`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

@@ -69,7 +69,7 @@ export const SubirExcel = () => {
       var enviar = JSON.stringify(excelActual)
       localStorage.setItem("excelActual", excelActual);
       console.log(excelActual)
-      fetch('http://18.222.222.154:5000/excel/subir', {
+      fetch('https://diseno-api.onrender.com/excel/subir', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

@@ -51,7 +51,7 @@ console.log(sesion)
 const getExcel = async () => {
   try {
    
-        const response = await fetch(`http://18.222.222.154:5000/excel/recuperar`, {
+        const response = await fetch(`https://diseno-api.onrender.com/excel/recuperar`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ const getExcel = async () => {
 const getProfes = async () =>{
   try {
    
-   const response = await fetch(`http://18.222.222.154:5000/profes/detalleF/${localStorage.getItem("conexionEsp")}`, {
+   const response = await fetch(`https://diseno-api.onrender.com/profes/detalleF/${localStorage.getItem("conexionEsp")}`, {
    //   const response = await fetch(`http://18.222.222.154:5000/profes/detalleF/1`, {
       method: 'GET',
       headers: {

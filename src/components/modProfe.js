@@ -59,7 +59,7 @@ export const ModProfe = () => {
       var nuevoProfe = {activo:activo,celular:celular, coordinador:coordinador, correo:correo, foto:foto,guia:guia,idSede:sede, nombre:completo, telefono:oficina}
       console.log(nuevoProfe)
       var enviar = JSON.stringify(nuevoProfe)
-      fetch('http://18.222.222.154:5000/profes/update/' , {
+      fetch('https://diseno-api.onrender.com/profes/update/' , {
       method: 'PUT',
       headers: {
       'Content-Type': 'application/json'

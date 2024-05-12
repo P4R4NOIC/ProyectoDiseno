@@ -16,7 +16,7 @@ export const LandingProfesor = () => {
     
     try {
    
-      const response = await fetch(`http://18.222.222.154:5000/excel/recuperar`, {
+      const response = await fetch(`https://diseno-api.onrender.com/excel/recuperar`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
