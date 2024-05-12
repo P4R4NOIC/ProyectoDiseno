@@ -99,7 +99,7 @@ const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
         return data;
         
       }else if(sesionUsuario>0){
-        const response = await fetch(`http://18.222.222.154:5000/asistentes/getAsistente/${email}`, {
+        const response = await fetch(`https://diseno-api.onrender.com/asistentes/getAsistente/${email}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
