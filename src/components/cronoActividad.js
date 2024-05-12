@@ -278,7 +278,7 @@ export const CronoActividad = () => {
       )}
     
       <div className='divVolver'>
-        <button className="button boton btn-submit" onClick={ ()=> navigate('/planTrabajo')}>Volver</button>
+        <button className="button boton btn-submit" onClick={ ()=> navigate(-1)}>Volver</button>
       </div>
       
     </div>

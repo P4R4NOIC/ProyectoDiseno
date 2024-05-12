@@ -229,7 +229,7 @@ export const PlanActividad = () => {
   const guardadoEnBase = async () => {
     try{
       // Lógica para guardar en la base de datos
-      await validarDatos();
+     await validarDatos();
   
       console.log('Datos válidos, guardando en la base de datos...');
       //console.log(formData);
@@ -237,7 +237,7 @@ export const PlanActividad = () => {
       console.log(JSON.stringify(formData));
       await subirDatos(formData);
       
-      navigate('/planActividad');
+      navigate(-2)
     }
     catch(error){
       alert("Error: " + error.message);

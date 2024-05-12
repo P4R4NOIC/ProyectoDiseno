@@ -126,7 +126,7 @@ export const PlanTrabajo = () => {
       )}
       
       <div className='divVolver'>
-        <button className="button boton btn-submit" onClick={ ()=> navigate('/detalleEquipo')}>Volver</button>
+        <button className="button boton btn-submit" onClick={ ()=> navigate(-1)}>Volver</button>
       </div>
       
     </div>

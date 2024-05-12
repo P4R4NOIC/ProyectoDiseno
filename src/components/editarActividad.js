@@ -289,9 +289,9 @@ export const EditarActividad = () => {
       
       console.log('Datos válidos, guardando en la base de datos...');
       console.log(formData);
-      subirDatos(formData);
+     subirDatos(formData);
       //console.log(JSON.stringify(formData));
-      navigate('/planTrabajo');
+      navigate(-3);
     }
     catch(error){
       alert("Error: " + error.message);
