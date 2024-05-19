@@ -420,7 +420,7 @@ export const PlanActividad = () => {
                       <label className ="textoGenera">Escribe el enlace:</label>
                     )}
                     {(formData.valoresGenerales.modalidad === 'Remota' || formData.valoresGenerales.modalidad === 'Presencial') && (
-                      <input type="text" id="tipoAsistencia" name='direccion' value={formData.valoresGenerales.direccion} onChange={handleChange} placeholder='Ingresa el enlace' className="form-control entrada"/>
+                      <input type="text" id="tipoAsistencia" name='direccion' value={formData.valoresGenerales.direccion} onChange={handleChange} placeholder='Ingresa la ubicacion/enlace' className="form-control entrada"/>
                     )}
                     
                   </div>

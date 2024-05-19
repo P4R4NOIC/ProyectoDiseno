@@ -185,6 +185,41 @@ throw new Error(error.message);
         localStorage.clear();
         navigate('/login');
       }
+
+
+
+      async function detectarProximaActividad(){
+        const objetoActividad = await pedirProximaActividad();
+        const jsonString = JSON.stringify(objetoActividad[0]);
+        await localStorage.setItem('actividadActual', jsonString);
+        navigate('/actividad');
+      }
+
+      const pedirProximaActividad = async () => {
+        try {
+            
+            const response = await fetch(`https://diseno-api.onrender.com/planes/actividadProxima`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+    
+            // Verificar si la respuesta es exitosa
+            if (!response.ok) {
+              // Si la respuesta no es exitosa, lanzar un error
+              throw new Error('Error al obtener la próxima actividad');
+            }
+    
+            // Convertir la respuesta a formato JSON
+            const data = await response.json();
+            return data;
+            
+        } catch (error){
+          throw new Error('Error: ' + error.message);
+        }
+      }
+
   return (
     <div>
         <h1 class = "tituloPrincipal">Asistente Administrativo: <label id="nombreProfesor">{variable}</label></h1>  
@@ -235,7 +270,7 @@ throw new Error(error.message);
     <button className="button boton btn-submit" type="button" onClick={()=>navigate('/agregaEstudiante')}>Registrar Nuevo Ingreso</button>
     </div>
     <div class="col botonAdm">
-    <button className="button boton btn-submit" type="button"onClick = {()=>navigate('/actividad')}>Ver Próxima Actividad</button>
+    <button className="button boton btn-submit" type="button" onClick={ ()=>detectarProximaActividad() }>Ver Próxima Actividad</button>
     </div>
     <div class="col columna-der botonAdm">
     <button className="button boton btn-submit botonAdmin" type="button" onClick={()=>navigate('/subirExcel')}>Subir Excel</button>

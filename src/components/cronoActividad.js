@@ -228,6 +228,7 @@ export const CronoActividad = () => {
 
   const handleClick = async (rowData) => {
     const jsonString = JSON.stringify(rowData);
+    console.log(rowData);
     localStorage.setItem("actividadActual", jsonString);
     navigate('/actividad');
   };

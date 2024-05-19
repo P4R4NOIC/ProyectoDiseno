@@ -52,15 +52,16 @@ export const DetalleEquipo = () => {
 
 
   async function detectarProximaActividad(){
-    //const objetoActividad = await pedirProximaActividad();
-    //await localStorage.setItem('actividadActual', objetoActividad);
+    const objetoActividad = await pedirProximaActividad();
+    const jsonString = JSON.stringify(objetoActividad[0]);
+    await localStorage.setItem('actividadActual', jsonString);
     navigate('/actividad');
   }
 
   const pedirProximaActividad = async () => {
     try {
         
-        const response = await fetch(`https://diseno-api.onrender.com/profes/guia`, {
+        const response = await fetch(`https://diseno-api.onrender.com/planes/actividadProxima`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
