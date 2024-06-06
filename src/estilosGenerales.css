@@ -193,3 +193,7 @@
 .cajaSelect select{
   width: 100%;
 }
+
+.textAreaMsg {
+  resize: none;
+}

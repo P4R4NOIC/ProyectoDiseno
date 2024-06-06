@@ -22,6 +22,12 @@ import { PlanTrabajo } from './components/planTrabajo';
 import { CreaPlanTrabajo } from './components/creaPlanTrabajo';
 import { CambiarContra } from './components/cambiarContra';
 
+import { LandingEstudiante } from './components/landingEstudiante';
+import { PerfilEstudiante } from './components/perfilEstudiante';
+import { ModificarInfoEstudiante } from './components/modificarInfoEstudiante';
+import { ListaActividades } from './components/listaActividades';
+import { BuzonEstudiantil } from './components/buzonEstudiantil';
+import { MensajeIndividual } from './components/mensajeIndividual';
 
 function App() {
   return (
@@ -48,6 +54,12 @@ function App() {
             <Route path="/planTrabajo" element = {<PlanTrabajo/>} />
             <Route path="/creaPlanTrabajo" element = {<CreaPlanTrabajo/>} />
             <Route path="/cambiarContra" element = {<CambiarContra/>} />
+            <Route path="/landingEstudiante" element = {<LandingEstudiante/>} />
+            <Route path="/perfilEstudiante" element = {<PerfilEstudiante/>} />
+            <Route path="/modificarInfoEstudiante" element = {<ModificarInfoEstudiante/>} />
+            <Route path="/listaActividades" element = {<ListaActividades/>} />
+            <Route path="/buzonEstudiantil" element = {<BuzonEstudiantil/>} />
+            <Route path="/mensajeIndividual" element = {<MensajeIndividual/>} />
           </Routes>
         </Router>
       
