@@ -172,6 +172,10 @@ const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
 
         </div>
 
+        <div>
+          <label>Fecha parametrizable: <input type="date" id="fechaParametrizada" className="form-control entrada"/></label>
+        </div>
+
     </div>
   )
 }

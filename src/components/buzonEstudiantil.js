@@ -212,6 +212,13 @@ export const BuzonEstudiantil = () => {
         navigate('/mensajeIndividual');
       };
 
+      const handleDelete = async (rowData) => {
+        // const jsonString = JSON.stringify(rowData);
+        // console.log(rowData);
+        // localStorage.setItem("mensajeActual", jsonString);
+        // navigate('/mensajeIndividual');
+      };
+
   return (
     <div>
       <div>
@@ -227,6 +234,8 @@ export const BuzonEstudiantil = () => {
               <th>Fecha de realización</th>
               <th>Tipo</th>
               <th>Estado</th>
+              <th>Abrir Mensaje</th>
+              <th>Eliminar</th>
             </tr>
           </thead>
           <tbody>
@@ -235,21 +244,34 @@ export const BuzonEstudiantil = () => {
               let estadoClase = '';
               switch (valoresGenerales.estado) {
                 case 'Read':
-                  estadoClase = "table-warning";
+                  estadoClase = "table-light";
                   break;
                 case 'NotRead':
-                  estadoClase = 'table-light';
+                  estadoClase = 'table-warning';
                   break;
                 default:
                   break;
               }
 
               return (
-                <tr key={key} className={estadoClase} onClick={() => handleClick(item)}>
+                <tr key={key} className={estadoClase}>
                   <td>{valoresGenerales.nombre}</td> 
                   <td>{valoresGenerales.fechaRealizacion}</td>
                   <td>{valoresGenerales.tipo}</td>
                   <td>{valoresGenerales.estado}</td>
+                  <td>
+                    <button className="button boton btn-submit" onClick={ ()=> handleClick(item)}>Abrir Mensaje</button>
+                  </td>
+                    {valoresGenerales.estado === "Read" && (
+                    <td>
+                        <button className="button boton btn-submit" onClick={ ()=> handleDelete(item)}>Borrar</button>
+                    </td>
+                    )}
+                    {valoresGenerales.estado !== "Read" && (
+                    <td>
+                        <button className="button boton disabled btn-submit">Borrar</button>
+                    </td>
+                    )}
                 </tr>
               );
             })}
