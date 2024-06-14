@@ -197,3 +197,10 @@
 .textAreaMsg {
   resize: none;
 }
+
+.error {
+  color: teal;
+  background-color: #1f1e1e;
+  border-radius: 5cm;
+  padding-left: 5mm;
+}

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, act} from 'react';
 import "../estilosGenerales.css"
 import { useNavigate } from "react-router-dom";
 
@@ -6,66 +6,60 @@ export const MensajeIndividual = () => {
 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    "mensajeCargado": "Actividad 01\nFecha de realización 30/06/2024\nDías para su publicación: 15\nLa actividad pasa de estado PLANEADA a NOTIFICADA el 15/06/2024\nDías para los recordatorios: 3\nLas fechas de recordatorio serán los días 18/06/2024, 21/06/2024, 24/06/2024, 27/06/2024.\nLa actividad sigue estando NOTIFICADA."
+    // "mensajeCargado": ""
+    // "mensajeCargado": 
+    // "Actividad 01\n
+    // Fecha de realización 30/06/2024\n
+    // Días para su publicación: 15\n
+    // La actividad pasa de estado PLANEADA a NOTIFICADA el 15/06/2024\n
+    // Días para los recordatorios: 3\n
+    // Las fechas de recordatorio serán los días 18/06/2024, 21/06/2024, 24/06/2024, 27/06/2024.\n
+    // La actividad sigue estando NOTIFICADA."
   });
   
   
+  const mensajeActual = localStorage.getItem("mensajeActual");
+  const [textAreaContent, setTextAreaContent] = useState('');
+
+  const formatActivityDetails = () => {
+    // Parsear mensajeActual de JSON a objeto JavaScript
+    const actividad = JSON.parse(mensajeActual);
+
+    // Verificar si se pudo parsear correctamente
+    if (!actividad || !actividad.valoresGenerales) {
+      return 'No hay información disponible para esta actividad.';
+    }
+
+    const {
+      nombre,
+      direccion,
+      fechaPublicacion,
+      fechaRealizacion,
+      fechaRecordatorio,
+      modalidad,
+      responsables,
+      semana,
+      tipo
+    } = actividad.valoresGenerales;
   
+    // Formatear fechas de recordatorio
+    const fechasRecordatorio = fechaRecordatorio.map(rec => new Date(rec.fechaR).toLocaleDateString()).join(', ');
+  
+    // Obtener nombres de los responsables
+    const nombresResponsables = responsables.map(responsable => responsable.nombre).join(', ');
+  
+    // Construir el mensaje final
+    const mensajeCargado = `Actividad: ${nombre}\nDirección: ${direccion}\nFecha de publicación: ${new Date(fechaPublicacion).toLocaleDateString()}\nFecha de realización: ${new Date(fechaRealizacion).toLocaleDateString()}\nFechas de recordatorio: ${fechasRecordatorio}\nModalidad: ${modalidad}\nResponsables: ${nombresResponsables}\nSemana: ${semana}\nTipo de actividad: ${tipo}`;
+  
+    return mensajeCargado;
+  };
+
+  // Actualizar el estado del textarea con el contenido formateado
   useEffect(() => {
-    const storedData = localStorage.getItem('EstudianteIndividual');
-    if (storedData) {
-      const parsedData = JSON.parse(storedData);
-      setFormData(parsedData);
+    if (mensajeActual) {
+      setTextAreaContent(formatActivityDetails());
     }
-  }, []);
-  
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const guardadoEnBase = async () => {
-    if (validarForm()) {
-      // Lógica para guardar en la base de datos
-      console.log('Datos válidos, guardando en la base de datos...');
-      console.log(formData)
-      //await subirDatos(formData);
-      //navigate(-1);
-    }
-  };
-
-  const phoneRegex = /^[0-9]{8,10}$/;
-  const validarForm = () => {
-    
-    if (!phoneRegex.test(formData.Cel) && formData.Cel !== ""){
-      alert("Número de teléfono inválido");
-      return false;
-    }
-
-    return true;
-  };
-
-    async function subirDatos(formData) {
-        console.log(formData)
-        try {
-            const response = await fetch('https://diseno-api.onrender.com/profes/update/Estudiante', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al obtener los datos');
-            }
-        } catch (error) {
-            throw new Error('Error al obtener los datos:', error.message);
-        }
-    }
+  }, [mensajeActual]);
 
   return (
 
@@ -76,7 +70,7 @@ export const MensajeIndividual = () => {
                 
                 <textarea
                     name="postContent"
-                    defaultValue={formData.mensajeCargado}
+                    value={textAreaContent}
                     rows={20}
                     cols={40}
                     className="form-control entrada textAreaMsg"

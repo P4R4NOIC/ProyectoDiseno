@@ -6,34 +6,18 @@ export const ModificarInfoEstudiante = () => {
 
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-      "Cel": "",
-      "foto": "",
+      "password": '',
+      "newPassword": '',
+      "confirmPassword": '',
+      "Cel": '',
+      "foto": ''
     });
   
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //           const response = await fetch(`https://diseno-api.onrender.com/#####`, {
-    //             method: 'GET',
-    //             headers: {
-    //               'Content-Type': 'application/json',
-    //             },
-    //           });
-          
-    //           if (!response.ok) {
-    //             throw new Error('Error al obtener los datos del detalle de equipo');
-    //           }
-    //           const data = await response.json();
-    //           setFormData(data);
-          
-    //         } catch (error){
-    //           console.error('Error al obtener los datos:', error.message);
-    //           setFormData([]); // Asigna un array vacío en caso de error
-    //         }
-    //       };
-      
-    //     fetchData(); // Llamada a la función para obtener los datos al montar el componente
-    // }, []);
+    
+    var usuarioJSON = localStorage.getItem("usuario");
+    var usuario = JSON.parse(usuarioJSON);
+    var userPassword = usuario.Contrasena;
+    
     
     const handleChange = (e) => {
       const { name, value } = e.target;
@@ -42,26 +26,58 @@ export const ModificarInfoEstudiante = () => {
         [name]: value,
       }));
     };
-  
+
+    const [errors, setErrors] = useState({});
+
     const guardadoEnBase = async () => {
       if (validarForm()) {
         // Lógica para guardar en la base de datos
         console.log('Datos válidos, guardando en la base de datos...');
-        console.log(formData)
-        //await subirDatos(formData);
-        //navigate(-1);
+        console.log(formData);
+        if(formData.confirmPassword !== ""){
+          console.log('Cambiando contraseña...');
+          //LLAMA A CAMBIO DE CONTRASEÑA
+          //await subirDatos(formData);
+        }
+        if(formData.Cel !== ""){
+          console.log('Cambiando numero de telefono...');
+          //LLAMA A CAMBIO DE CEL
+          //await subirDatos(formData);
+        }
+        //VUELTA A ATRAS
+        if(formData.confirmPassword !== "" || formData.Cel !== ""){
+          alert("Sus datos han sido modificados");
+          navigate(-1);
+        }
       }
     };
   
     const phoneRegex = /^[0-9]{8,10}$/;
     const validarForm = () => {
+      let newErrors = {};
+      if(formData.password !== ""){
+        if (formData.password !== userPassword) {
+          newErrors.password = 'La contraseña no coincide con su contraseña previa';
+        }
+        if (formData.newPassword === "") {
+          newErrors.newPassword = 'No se ha ingresado nueva contraseña';
+        }
+        if (formData.newPassword !== formData.confirmPassword) {
+          newErrors.confirmPassword = 'Las contraseñas no coinciden';
+        }
+      }else{
+        if (formData.newPassword !== "" || formData.confirmPassword !== "") {
+          newErrors.confirmPassword = 'No ha agregado su contraseña pasada';
+        }
+      }
       
       if (!phoneRegex.test(formData.Cel) && formData.Cel !== ""){
-        alert("Número de teléfono inválido");
-        return false;
+        newErrors.invalidPhone = "Numero de telefono invalido";
       }
-  
-      return true;
+
+      setErrors(newErrors);
+
+      return Object.keys(newErrors).length === 0;
     };
   
       async function subirDatos(formData) {
@@ -94,22 +110,24 @@ export const ModificarInfoEstudiante = () => {
                 <form>
                     <div>
                         <label className='textoGenera'>Contraseña:</label>
-                        <input type="password" id="password" name="password" className="form-control entrada"/>
+                        <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} className="form-control entrada"/>
                     </div>
+                    {errors.password && <p className="error">{errors.password}</p>}
                     <div>
                         <label className='textoGenera'>Nueva Contraseña:</label>
-                        <input type="password" id="Newpassword" name="Newpassword" className="form-control entrada"/>
+                        <input type="password" id="newPassword" name="newPassword" value={formData.newPassword} onChange={handleChange} className="form-control entrada"/>
                     </div>
+                    {errors.newPassword && <p className="error">{errors.newPassword}</p>}
                     <div>
                         <label className='textoGenera'>Confirmar contraseña:</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" className="form-control entrada"/>
+                        <input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} className="form-control entrada"/>
                     </div>
-                    
+                    {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
                     <div>
                         <label className='textoGenera'>Número de Celular:</label>
                         <input type="text" id="numCelular" name="Cel" value={formData.Cel} onChange={handleChange} className="form-control entrada"/>
                     </div>
-                    
+                    {errors.invalidPhone && <p className="error">{errors.invalidPhone}</p>}
                     <div>
                         <label className='textoGenera'>Fotografía:</label>
                         <input type="file" id="foto" name="foto" value={formData.foto} onChange={handleChange} className="form-control entrada"/>

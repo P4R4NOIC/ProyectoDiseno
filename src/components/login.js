@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react';
 import '../login.css';
 import "../estilosGenerales.css"
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,8 @@ async function validaCorreo(){
   var email = document.getElementById("inputEmail").value;
   var contrasena = document.getElementById("inputPassword").value
 
+  validateDate();
+
   if (email === '' || contrasena == ''){
     throw new Error ('Los campos no pueden ser vacios');
   }
@@ -26,6 +28,9 @@ async function validaCorreo(){
   if (sesionUsuario === 'PROFESOR') {
     localStorage.setItem('sesionUsuario', sesionUsuario);
     navigate('/landingProfesor');
+  } else if (sesionUsuario === 'ESTUDIANTE') {
+    localStorage.setItem('sesionUsuario', sesionUsuario);
+    navigate('/landingEstudiante');
   } else if (sesionUsuario === 'INVALID') {
     throw new Error('Dirección inválida o contraseña incorrecta');
   } else {
@@ -46,6 +51,7 @@ const obtenerSesionUsuario = async (email, contrasena) =>{
   var correoAdminALValido = /^[\w-\.]+@(adminAL.ac.cr)$/;
   var correoAdminSCValido = /^[\w-\.]+@(adminSC.ac.cr)$/;
   var correoProfesorValido = /^[a-zA-Z0-9_-]+(@itcr.ac.cr)$/;
+  var correoEstudianteValido = /^[a-zA-Z0-9_-]+(@estudiantec.cr)$/;
   
 
   if (correoAdminCAValido.test(email) && contrasena !== ""){
@@ -65,6 +71,9 @@ const obtenerSesionUsuario = async (email, contrasena) =>{
   }
   if(correoProfesorValido.test(email) && contrasena !== ""){
     return "PROFESOR";
+  }
+  if(correoEstudianteValido.test(email) && contrasena !== ""){
+    return "ESTUDIANTE";
   }
   return "INVALID";
   
@@ -123,6 +132,31 @@ const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
           throw new Error('Tokens no validos');
         }
       }
+      else if(sesionUsuario === 'ESTUDIANTE'){
+        const response = await fetch(`https://diseno-api.onrender.com/excel/InicioEstudiante/${email}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // Verificar si la respuesta es exitosa
+        if (!response.ok) {
+          // Si la respuesta no es exitosa, lanzar un error
+          throw new Error('Error al obtener los datos del usuario');
+        }
+
+        // Convertir la respuesta a formato JSON
+        const data = await response.json();
+        // Devolver los datos del usuario
+        console.log(data)
+        if(contrasena === data.contra){
+          localStorage.setItem("conexionEsp", sesionUsuario);
+          return data;
+        } else{
+          throw new Error('Tokens no validos');
+        }
+      }
       else{
         const response = await fetch(`https://diseno-api.onrender.com/profes/guia/${email}`, {
           method: 'GET',
@@ -152,6 +186,26 @@ const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
   }
 }
 
+const [actualDate, setDate] = useState({
+  "Date": ""
+});
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setDate(prevState => ({
+    ...prevState,
+    [name]: value,
+  }));
+};
+
+function validateDate() {
+  if(actualDate.Date === ''){
+    console.log("No Date");
+  }else{
+    //-------------------------------------------------------------------SEND DATE TO DB-------------------------------------------------------------------
+    console.log(actualDate);
+  }
+}
+
   return (
     
     <div className = "contenedor">
@@ -173,7 +227,7 @@ const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
         </div>
 
         <div>
-          <label>Fecha parametrizable: <input type="date" id="fechaParametrizada" className="form-control entrada"/></label>
+          <label>Fecha parametrizable: <input type="date" id="fechaParametrizada" name='Date' onChange={handleChange} className="form-control entrada"/></label>
         </div>
 
     </div>
