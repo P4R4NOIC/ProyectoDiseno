@@ -7,7 +7,9 @@ import { useNavigate } from "react-router-dom";
 export const ListaActividades = () => {
 
   const navigate = useNavigate();
-  
+  // var listaActividadesJSON = localStorage.getItem("listaActividades");
+  // var data = JSON.parse(listaActividadesJSON);
+
   const data = [
     {
       "valoresGenerales": {
@@ -191,7 +193,6 @@ export const ListaActividades = () => {
       ]
     }
   ];
-  
 
 
   return (

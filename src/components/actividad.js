@@ -160,6 +160,7 @@ const getComentarios = async () => {
   }
 
   async function cargarComentarios(){
+    console.log("ENTRE")
     const comentarios = await getComentarios()
     localStorage.setItem("comentarios",JSON.stringify(comentarios))
     for(var i = 0; i<comentarios.length; i++){
@@ -266,7 +267,9 @@ const getComentarios = async () => {
   }
 
   useEffect(()=>{
-    cargarComentarios();
+    if(sesionUsuario === "PROFESOR"){
+      cargarComentarios();
+    }
    
      }, [])
   
