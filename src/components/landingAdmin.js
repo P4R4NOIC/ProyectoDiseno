@@ -123,7 +123,8 @@ throw new Error(error.message);
   async function creaProfes(){
     const profes = await getProfes();
    // console.log(profes["profes"])
-    
+  
+      
       for(var i = 0; i<profes["profes"].length; i++){
        
           var div = document.createElement("div");
@@ -150,7 +151,26 @@ throw new Error(error.message);
       //console.log(profes[0])
         for(var i = 0; i<profes["profesGuia"][0].length; i++){
          
-         
+          console.log(profes["profesGuia"][0][i]["coordinador"])
+          if(profes["profesGuia"][0][i]["coordinador"] === 1){
+            console.log("sirve")
+            var div = document.createElement("div");
+            var a = document.createElement("a");
+            div.classList = "textoCaja";
+            a.classList = "profescoordinador";
+          
+            a.textContent = profes["profesGuia"][0][i]["nombre"] 
+            a.id = i
+            a.onclick = function(){
+              localStorage.setItem("profe", this.id);
+              localStorage.setItem("desplegarGuias",1);
+              navigate('/infoProfe');
+            }
+            
+            div.appendChild(a)
+            document.getElementById("colGuia").appendChild(div);
+
+          }else{
             var div = document.createElement("div");
             var a = document.createElement("a");
             div.classList = "textoCaja";
@@ -167,7 +187,7 @@ throw new Error(error.message);
             div.appendChild(a)
             document.getElementById("colGuia").appendChild(div);
           
-          
+          }
         }
       }
       var nombreSes;

@@ -9,6 +9,8 @@
 .archivos{
     width: 200px;
 }
+
+
 .scroll{
     overflow-y: scroll;
     height: 400px;
@@ -58,5 +60,13 @@
     color: white;
 }
 .profes:hover{
+    color:rgb(182, 144, 218);
+}
+
+.profescoordinador{
+    text-decoration: none;
+    color: rgba(38, 251, 251, 0.939);
+}
+.profescoordinador:hover{
     color:rgb(182, 144, 218);
 }
