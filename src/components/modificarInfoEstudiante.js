@@ -12,11 +12,13 @@ export const ModificarInfoEstudiante = () => {
       "Cel": '',
       "foto": ''
     });
-  
+
     
     var usuarioJSON = localStorage.getItem("usuario");
     var usuario = JSON.parse(usuarioJSON);
-    var userPassword = usuario.Contrasena;
+    var userEmail = usuario.username
+    var userPassword = usuario.contrasena;
+    
     
     
     const handleChange = (e) => {
@@ -37,16 +39,20 @@ export const ModificarInfoEstudiante = () => {
         if(formData.confirmPassword !== ""){
           console.log('Cambiando contraseña...');
           //LLAMA A CAMBIO DE CONTRASEÑA
-          //await subirDatos(formData);
+          await guardarContrasena(formData.confirmPassword);
         }
         if(formData.Cel !== ""){
           console.log('Cambiando numero de telefono...');
           //LLAMA A CAMBIO DE CEL
-          //await subirDatos(formData);
+          usuario.Cel = formData.Cel;
+          console.log(usuario)
+         
+          await subirDatos(usuario);
         }
         //VUELTA A ATRAS
         if(formData.confirmPassword !== "" || formData.Cel !== ""){
           alert("Sus datos han sido modificados");
+          recargarDatos();
           navigate(-1);
         }
       }
@@ -80,24 +86,68 @@ export const ModificarInfoEstudiante = () => {
       return Object.keys(newErrors).length === 0;
     };
   
-      async function subirDatos(formData) {
-          console.log(formData)
-          try {
-              const response = await fetch('https://diseno-api.onrender.com/profes/update/Estudiante', {
-                  method: 'PUT',
-                  headers: {
-                      'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify(formData)
-              });
+    async function guardarContrasena(password) {
+      const variable = {
+        "contrasena": password,
+        "username": userEmail
+      };
+      console.log(variable)
+      try {
+        const response = await fetch ('https://diseno-api.onrender.com/excel/update/contraEstudiante', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(variable)
+        });
   
-              if (!response.ok) {
-                  throw new Error('Error al obtener los datos');
-              }
-          } catch (error) {
-              throw new Error('Error al obtener los datos:', error.message);
-          }
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+      } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
       }
+    }
+
+    async function subirDatos(formData) {
+      console.log(formData)
+      try {
+          const response = await fetch('https://diseno-api.onrender.com/profes/update/Estudiante', {
+              method: 'PUT',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(formData)
+          });
+  
+          if (!response.ok) {
+              throw new Error('Error al obtener los datos');
+          }
+      } catch (error) {
+          throw new Error('Error al obtener los datos:', error.message);
+      }
+    }
+
+    async function recargarDatos(){
+      const response = await fetch(`https://diseno-api.onrender.com/excel/InicioEstudiante/${userEmail}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // Verificar si la respuesta es exitosa
+      if (!response.ok) {
+        // Si la respuesta no es exitosa, lanzar un error
+        throw new Error('Error al obtener los datos del usuario');
+      }
+
+      // Convertir la respuesta a formato JSON
+      const data = await response.json();
+      // Devolver los datos del usuario
+      console.log(data)
+      await localStorage.setItem('usuario', JSON.stringify(data));
+    }
   
 
 

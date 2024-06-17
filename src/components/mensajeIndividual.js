@@ -26,32 +26,32 @@ export const MensajeIndividual = () => {
     const actividad = JSON.parse(mensajeActual);
 
     // Verificar si se pudo parsear correctamente
-    if (!actividad || !actividad.valoresGenerales) {
-      return 'No hay información disponible para esta actividad.';
-    }
+    // if (!actividad || !actividad.valoresGenerales) {
+    //   return 'No hay información disponible para esta actividad.';
+    // }
 
-    const {
-      nombre,
-      direccion,
-      fechaPublicacion,
-      fechaRealizacion,
-      fechaRecordatorio,
-      modalidad,
-      responsables,
-      semana,
-      tipo
-    } = actividad.valoresGenerales;
+    // const {
+    //   nombre,
+    //   direccion,
+    //   fechaPublicacion,
+    //   fechaRealizacion,
+    //   fechaRecordatorio,
+    //   modalidad,
+    //   responsables,
+    //   semana,
+    //   tipo
+    // } = actividad.valoresGenerales;
   
-    // Formatear fechas de recordatorio
-    const fechasRecordatorio = fechaRecordatorio.map(rec => new Date(rec.fechaR).toLocaleDateString()).join(', ');
+    // // Formatear fechas de recordatorio
+    // const fechasRecordatorio = fechaRecordatorio.map(rec => new Date(rec.fechaR).toLocaleDateString()).join(', ');
   
-    // Obtener nombres de los responsables
-    const nombresResponsables = responsables.map(responsable => responsable.nombre).join(', ');
+    // // Obtener nombres de los responsables
+    // const nombresResponsables = responsables.map(responsable => responsable.nombre).join(', ');
   
-    // Construir el mensaje final
-    const mensajeCargado = `Actividad: ${nombre}\nDirección: ${direccion}\nFecha de publicación: ${new Date(fechaPublicacion).toLocaleDateString()}\nFecha de realización: ${new Date(fechaRealizacion).toLocaleDateString()}\nFechas de recordatorio: ${fechasRecordatorio}\nModalidad: ${modalidad}\nResponsables: ${nombresResponsables}\nSemana: ${semana}\nTipo de actividad: ${tipo}`;
+    // // Construir el mensaje final
+    // const mensajeCargado = `Actividad: ${nombre}\nDirección: ${direccion}\nFecha de publicación: ${new Date(fechaPublicacion).toLocaleDateString()}\nFecha de realización: ${new Date(fechaRealizacion).toLocaleDateString()}\nFechas de recordatorio: ${fechasRecordatorio}\nModalidad: ${modalidad}\nResponsables: ${nombresResponsables}\nSemana: ${semana}\nTipo de actividad: ${tipo}`;
   
-    return mensajeCargado;
+    return actividad;
   };
 
   // Actualizar el estado del textarea con el contenido formateado

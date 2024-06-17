@@ -13,8 +13,6 @@ async function validaCorreo(){
   var email = document.getElementById("inputEmail").value;
   var contrasena = document.getElementById("inputPassword").value
 
-  validateDate();
-
   if (email === '' || contrasena == ''){
     throw new Error ('Los campos no pueden ser vacios');
   }
@@ -24,7 +22,9 @@ async function validaCorreo(){
   const usuario = await autenticarUsuario(email, contrasena, sesionUsuario);
   
   await localStorage.setItem('usuario', JSON.stringify(usuario));
-  
+
+  validateDate();
+
   if (sesionUsuario === 'PROFESOR') {
     localStorage.setItem('sesionUsuario', sesionUsuario);
     navigate('/landingProfesor');
@@ -107,6 +107,30 @@ const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
         } 
         return data;
         
+      }else if(sesionUsuario === 'ESTUDIANTE'){
+        const response = await fetch(`https://diseno-api.onrender.com/excel/InicioEstudiante/${email}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // Verificar si la respuesta es exitosa
+        if (!response.ok) {
+          // Si la respuesta no es exitosa, lanzar un error
+          throw new Error('Error al obtener los datos del usuario');
+        }
+
+        // Convertir la respuesta a formato JSON
+        const data = await response.json();
+        // Devolver los datos del usuario
+        console.log(data)
+        if(contrasena === data.contrasena){
+          localStorage.setItem("conexionEsp", sesionUsuario);
+          return data;
+        } else{
+          throw new Error('Tokens no validos');
+        }
       }else if(sesionUsuario>0){
         const response = await fetch(`https://diseno-api.onrender.com/asistentes/getAsistente/${email}`, {
           method: 'GET',
@@ -131,33 +155,7 @@ const autenticarUsuario = async (email, contrasena, sesionUsuario) => {
         } else{
           throw new Error('Tokens no validos');
         }
-      }
-      else if(sesionUsuario === 'ESTUDIANTE'){
-        const response = await fetch(`https://diseno-api.onrender.com/excel/InicioEstudiante/${email}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        // Verificar si la respuesta es exitosa
-        if (!response.ok) {
-          // Si la respuesta no es exitosa, lanzar un error
-          throw new Error('Error al obtener los datos del usuario');
-        }
-
-        // Convertir la respuesta a formato JSON
-        const data = await response.json();
-        // Devolver los datos del usuario
-        console.log(data)
-        if(contrasena === data.contra){
-          localStorage.setItem("conexionEsp", sesionUsuario);
-          return data;
-        } else{
-          throw new Error('Tokens no validos');
-        }
-      }
-      else{
+      }else{
         const response = await fetch(`https://diseno-api.onrender.com/profes/guia/${email}`, {
           method: 'GET',
           headers: {
@@ -202,7 +200,25 @@ function validateDate() {
     console.log("No Date");
   }else{
     //-------------------------------------------------------------------SEND DATE TO DB-------------------------------------------------------------------
-    console.log(actualDate);
+    const Fecha = {
+      "Fecha": actualDate.Date
+    }
+    console.log(Fecha);
+    try {
+        const response = fetch('https://diseno-api.onrender.com/planes/setSystemDate', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(Fecha)
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+      } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+      }
   }
 }
 
