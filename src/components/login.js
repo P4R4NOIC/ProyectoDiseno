@@ -195,7 +195,7 @@ const handleChange = (e) => {
   }));
 };
 
-function validateDate() {
+async function validateDate() {
   if(actualDate.Date === ''){
     console.log("No Date");
   }else{
@@ -205,7 +205,7 @@ function validateDate() {
     }
     console.log(Fecha);
     try {
-        const response = fetch('https://diseno-api.onrender.com/planes/setSystemDate', {
+        const response = await fetch('https://diseno-api.onrender.com/planes/setSystemDate', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'

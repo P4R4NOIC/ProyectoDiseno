@@ -1,13 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import "../estilosGenerales.css"
 import { useNavigate } from "react-router-dom";
 
 export const LandingEstudiante = () => {
   const navigate = useNavigate();
-  
-  var usuarioJSON = localStorage.getItem("usuario");
-  var usuario = JSON.parse(usuarioJSON);
-  console.log(usuario);
+
+
   function cierreSesion(){
     localStorage.clear();
     navigate('/login');
@@ -49,8 +47,46 @@ export const LandingEstudiante = () => {
 
   const pedirActividades = async() => {
     navigate('/listaActividades');
-    
   }
+
+
+  var usuarioJSON = localStorage.getItem("usuario");
+  var usuarioPedido = JSON.parse(usuarioJSON);
+  var email = usuarioPedido.username;
+  useEffect(() => {
+    const fetchData = async() => {
+      
+      try{
+        const response = await fetch(`https://diseno-api.onrender.com/excel/InicioEstudiante/${email}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        // Verificar si la respuesta es exitosa
+        if (!response.ok) {
+          // Si la respuesta no es exitosa, lanzar un error
+          throw new Error('Error al obtener los datos del usuario');
+        }
+  
+        // Convertir la respuesta a formato JSON
+        const data = await response.json();
+        // Devolver los datos del usuario
+        console.log(data)
+        await localStorage.setItem('usuario', JSON.stringify(data));
+        
+      } catch (error){
+        throw new Error(error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  var usuarioJSON = localStorage.getItem("usuario");
+  var usuario = JSON.parse(usuarioJSON);
+  console.log(usuario)
 
   return (
 

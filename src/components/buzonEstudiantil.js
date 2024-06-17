@@ -6,12 +6,14 @@ import { useNavigate } from "react-router-dom";
 export const BuzonEstudiantil = () => {
     const navigate = useNavigate();
     var usuarioJSON = localStorage.getItem("usuario");
+    console.log("USUARIOJSON: " + usuarioJSON);
     var usuario = JSON.parse(usuarioJSON);
-
+    console.log("USUARIO: " + usuario);
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
 
     const user = usuario.username;
+    console.log("USER: " + user);
     useEffect(() => {
       const fetchData = async () => {
         try {

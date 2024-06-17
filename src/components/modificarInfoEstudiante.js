@@ -52,7 +52,6 @@ export const ModificarInfoEstudiante = () => {
         //VUELTA A ATRAS
         if(formData.confirmPassword !== "" || formData.Cel !== ""){
           alert("Sus datos han sido modificados");
-          recargarDatos();
           navigate(-1);
         }
       }
@@ -127,29 +126,6 @@ export const ModificarInfoEstudiante = () => {
           throw new Error('Error al obtener los datos:', error.message);
       }
     }
-
-    async function recargarDatos(){
-      const response = await fetch(`https://diseno-api.onrender.com/excel/InicioEstudiante/${userEmail}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      // Verificar si la respuesta es exitosa
-      if (!response.ok) {
-        // Si la respuesta no es exitosa, lanzar un error
-        throw new Error('Error al obtener los datos del usuario');
-      }
-
-      // Convertir la respuesta a formato JSON
-      const data = await response.json();
-      // Devolver los datos del usuario
-      console.log(data)
-      await localStorage.setItem('usuario', JSON.stringify(data));
-    }
-  
-
 
   return (
 
